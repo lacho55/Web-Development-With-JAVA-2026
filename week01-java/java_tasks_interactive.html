@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Tasks & Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14; --surface:#13161e; --surface2:#1a1e2a; --border:#252a38;
+    --accent:#f0c040; --accent2:#4ec9b0; --accent3:#ce9178;
+    --text:#d4d8e8; --text-dim:#6b7394; --text-bright:#eef0f8;
+    --kw:#569cd6; --str:#ce9178; --cmt:#6a9955; --typ:#4ec9b0;
+    --num:#b5cea8; --mth:#dcdcaa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7}
+  header{background:linear-gradient(135deg,#0d0f14 0%,#131827 100%);border-bottom:1px solid var(--border);padding:48px 40px 36px;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.12) 0%,transparent 70%);pointer-events:none}
+  .header-inner{max-width:900px;margin:0 auto;position:relative}
+  .header-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;opacity:.8}
+  h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,4vw,46px);color:var(--text-bright);line-height:1.1;margin-bottom:14px}
+  h1 span{color:var(--accent)}
+  .header-meta{font-size:14px;color:var(--text-dim);display:flex;gap:24px;flex-wrap:wrap;align-items:center;margin-top:20px}
+  .meta-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--text-dim)}
+  .container{max-width:900px;margin:0 auto;padding:40px 40px 80px}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:48px}
+  .toc-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:20px}
+  .toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 24px}
+  .toc-grid a{color:var(--text-dim);text-decoration:none;font-size:13px;font-family:'JetBrains Mono',monospace;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px}
+  .toc-grid a:hover{color:var(--accent);border-color:var(--accent)}
+  .toc-num{color:var(--accent);opacity:.5;min-width:22px;font-size:11px}
+  .section-divider{display:flex;align-items:center;gap:16px;margin:56px 0 28px}
+  .section-divider-line{flex:1;height:1px;background:var(--border)}
+  .section-divider-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px}
+  .task-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+  .task-card:hover{border-color:#2e3448}
+  .task-header{padding:20px 24px;display:flex;align-items:flex-start;gap:16px}
+  .task-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(240,192,64,.1);border:1px solid rgba(240,192,64,.2);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+  .task-content{flex:1}
+  .task-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:8px;line-height:1.3}
+  .task-desc{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .task-desc code,.key-point code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent3);background:rgba(206,145,120,.08);padding:1px 5px;border-radius:3px}
+  .bad-code{margin:0 24px 12px;background:rgba(255,80,80,.04);border:1px solid rgba(255,80,80,.15);border-radius:8px;overflow:hidden}
+  .bad-code-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#ff6b6b;padding:6px 14px;background:rgba(255,80,80,.07);border-bottom:1px solid rgba(255,80,80,.1)}
+  .bad-code pre{padding:14px 16px;font-size:12px;color:var(--text-dim);overflow-x:auto;font-family:'JetBrains Mono',monospace}
+  .solution-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;cursor:pointer;background:var(--surface2);border-top:1px solid var(--border);user-select:none;transition:background .15s;gap:12px}
+  .solution-toggle:hover{background:#1e2332}
+  .solution-toggle-left{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.5px}
+  .toggle-arrow{margin-left:auto;color:var(--text-dim);transition:transform .25s ease;flex-shrink:0}
+  .task-card.open .toggle-arrow{transform:rotate(180deg)}
+  .task-card.open .solution-toggle{background:rgba(78,201,176,.06)}
+  .solution-body{display:none;border-top:1px solid var(--border)}
+  .task-card.open .solution-body{display:block}
+  .code-wrap{position:relative}
+  .code-lang{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);padding:10px 16px 4px;background:#0f1118;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2030}
+  .lang-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .copy-btn{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+  .copy-btn:hover,.copy-btn.copied{color:var(--accent2);border-color:var(--accent2)}
+  pre.code-block{background:#0f1118;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;color:var(--text);tab-size:4;margin:0}
+  .kw{color:var(--kw)}.str{color:var(--str)}.cmt{color:var(--cmt);font-style:italic}.typ{color:var(--typ)}.num{color:var(--num)}.mth{color:var(--mth)}
+  .output-block{background:#090b10;border-top:1px solid #1a1d28;padding:16px 20px}
+  .output-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+  .output-block pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:#88c0d0;line-height:1.6;white-space:pre-wrap}
+  .key-points{padding:18px 24px;background:rgba(240,192,64,.03);border-top:1px solid rgba(240,192,64,.1)}
+  .key-points-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);opacity:.7;margin-bottom:10px}
+  .key-point{display:flex;gap:10px;font-size:13px;color:var(--text-dim);padding:3px 0;line-height:1.55}
+  .key-point::before{content:'→';color:var(--accent);opacity:.5;flex-shrink:0;margin-top:1px}
+  .kp-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  .kp-table th{text-align:left;padding:7px 12px;background:#1a1e2a;color:var(--text-dim);font-weight:500;border:1px solid var(--border)}
+  .kp-table td{padding:6px 12px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text)}
+  @media(max-width:640px){header{padding:32px 20px 24px}.container{padding:28px 16px 60px}.toc{padding:20px}.task-header{padding:16px 18px}.solution-toggle{padding:12px 18px}}
+  ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2e3448;border-radius:3px}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="header-label">// study guide</div>
+    <h1>Java <span>Tasks</span> &amp; Solutions</h1>
+    <div class="header-meta">
+      <span class="meta-pill">52 Topics</span>
+      <span class="meta-pill">52 Tasks</span>
+      <span class="meta-pill">Simple &rarr; Moderate</span>
+      <span style="font-size:13px;color:var(--text-dim)">Click <strong style="color:var(--accent2)">&#9658; Solution</strong> to reveal each answer</span>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="toc"><div class="toc-title">Table of Contents</div><div class="toc-grid" id="toc"></div></div>
+  <div id="tasks"></div>
+</div>
+
+<script>
+// ── Safe highlighter: works on plain text, outputs HTML ──
+function highlight(raw) {
+  // 1. Escape HTML entities first
+  let s = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // 2. Protect strings (double-quoted) — replace with placeholders
+  const strTokens = [];
+  s = s.replace(/"([^"\\]|\\.)*"/g, m => {
+    const idx = strTokens.length;
+    strTokens.push('<span class="str">' + m + '</span>');
+    return '\x00STR' + idx + '\x00';
+  });
+  // char literals
+  s = s.replace(/'[^'\\]'/g, m => {
+    const idx = strTokens.length;
+    strTokens.push('<span class="str">' + m + '</span>');
+    return '\x00STR' + idx + '\x00';
+  });
+
+  // 3. Protect comments
+  const cmtTokens = [];
+  // block comments
+  s = s.replace(/\/\*[\s\S]*?\*\//g, m => {
+    const idx = cmtTokens.length;
+    cmtTokens.push('<span class="cmt">' + m + '</span>');
+    return '\x00CMT' + idx + '\x00';
+  });
+  // line comments
+  s = s.replace(/\/\/[^\n]*/g, m => {
+    const idx = cmtTokens.length;
+    cmtTokens.push('<span class="cmt">' + m + '</span>');
+    return '\x00CMT' + idx + '\x00';
+  });
+
+  // 4. Keywords — single-pass replace so 'class' inside class="kw" is never re-matched
+  const kws = ['public','private','protected','static','void','class','record',
+    'return','new','if','else','for','while','do','switch','case','break',
+    'continue','int','double','float','long','short','byte','char','boolean',
+    'import','package','final','abstract','interface','extends','implements',
+    'try','catch','throws','throw','default','this','super','null','true',
+    'false','instanceof','var','sealed','permits','yield'];
+  s = s.replace(new RegExp('(?<![\\w])(' + kws.join('|') + ')(?![\\w])', 'g'),
+    '\x00KW$1\x00');
+  s = s.replace(/\x00KW(\w+)\x00/g, '<span class="kw">$1</span>');
+
+  // 5. Built-in types — single-pass for the same reason
+  const types = ['String','Integer','Double','Boolean','Long','Float','Character',
+    'Byte','Short','Object','System','Math','Scanner','StringBuilder','StringBuffer',
+    'Arrays','List','ArrayList','Map','HashMap','Set','HashSet','Optional',
+    'Stream','Collectors','Pattern','Matcher','Thread','Runnable','Comparable',
+    'Iterable','Collections','Consumer','Function','Predicate','Supplier',
+    'BiFunction','UnaryOperator','BinaryOperator','Comparator','Iterator'];
+  s = s.replace(new RegExp('(?<![\\w])(' + types.join('|') + ')(?![\\w])', 'g'),
+    '\x00TYP$1\x00');
+  s = s.replace(/\x00TYP(\w+)\x00/g, '<span class="typ">$1</span>');
+
+  // 6. Numbers
+  s = s.replace(/(?<!\w)(\d+\.?\d*[fFLlDd]?)(?!\w)/g, '<span class="num">$1</span>');
+
+  // 7. Method calls (word followed by open paren)
+  s = s.replace(/\b([a-z][a-zA-Z0-9_]*)(?=\s*\()/g, '<span class="mth">$1</span>');
+
+  // 8. Restore placeholders
+  cmtTokens.forEach((val, i) => { s = s.replace('\x00CMT' + i + '\x00', val); });
+  strTokens.forEach((val, i)  => { s = s.replace('\x00STR'  + i + '\x00', val); });
+
+  return s;
+}
+
+// ── Data ──
+const DATA = [
+{
+"id": 1,
+"title": "Variables & Data Types",
+"desc": "Declare variables of different types: an integer for age, a double for height in meters, a boolean indicating whether you are a student, and a <code>String</code> for your name. Print all in a formatted sentence.",
+"code": "public class VariablesTask {\n    public static void main(String[] args) {\n        int age = 21;\n        double height = 1.75;\n        boolean isStudent = true;\n        String name = \"Alice\";\n\n        System.out.println(\"Name: \" + name);\n        System.out.println(\"Age: \" + age);\n        System.out.println(\"Height: \" + height + \"m\");\n        System.out.println(\"Student: \" + isStudent);\n    }\n}",
+"output": "Name: Alice\nAge: 21\nHeight: 1.75m\nStudent: true",
+"points": [
+"Variables must be declared with a type before use.",
+"Java is strongly typed — you cannot assign a <code>String</code> to an <code>int</code>.",
+"Variable names follow <code>camelCase</code> convention."
+]
+},
+{
+"id": 2,
+"title": "Primitive Types",
+"desc": "Declare one variable of each of Java's 8 primitive types (<code>byte, short, int, long, float, double, char, boolean</code>). Print each value and its min/max range using wrapper class constants.",
+"code": "public class PrimitiveTypesTask {\n    public static void main(String[] args) {\n        byte    b    = 100;\n        short   s    = 30_000;\n        int     i    = 2_000_000;\n        long    l    = 9_000_000_000L;\n        float   f    = 3.14f;\n        double  d    = 3.141592653589793;\n        char    c    = 'J';\n        boolean flag = true;\n\n        System.out.println(\"byte   : \" + b    + \" (range: \" + Byte.MIN_VALUE    + \" to \" + Byte.MAX_VALUE    + \")\");\n        System.out.println(\"short  : \" + s    + \" (range: \" + Short.MIN_VALUE   + \" to \" + Short.MAX_VALUE   + \")\");\n        System.out.println(\"int    : \" + i    + \" (range: \" + Integer.MIN_VALUE + \" to \" + Integer.MAX_VALUE + \")\");\n        System.out.println(\"long   : \" + l);\n        System.out.println(\"float  : \" + f);\n        System.out.println(\"double : \" + d);\n        System.out.println(\"char   : \" + c);\n        System.out.println(\"boolean: \" + flag);\n    }\n}",
+"output": "byte   : 100 (range: -128 to 127)\nshort  : 30000 (range: -32768 to 32767)\nint    : 2000000 (range: -2147483648 to 2147483647)\nlong   : 9000000000\nfloat  : 3.14\ndouble : 3.141592653589793\nchar   : J\nboolean: true",
+"points": [
+"<code>long</code> literals need the <code>L</code> suffix; <code>float</code> literals need <code>f</code>.",
+"Underscores in numeric literals (<code>2_000_000</code>) improve readability (Java 7+).",
+"Each primitive has a wrapper class: <code>Integer</code>, <code>Double</code>, <code>Boolean</code>, etc."
+]
+},
+{
+"id": 3,
+"title": "Reference Types",
+"desc": "Create a <code>String</code> and an integer array. Demonstrate that reference types store a memory address by assigning one reference to another and modifying the array through the second reference.",
+"code": "public class ReferenceTypesTask {\n    public static void main(String[] args) {\n        String greeting = \"Hello\";\n        String copy = greeting;\n        System.out.println(\"greeting: \" + greeting);\n        System.out.println(\"copy    : \" + copy);\n\n        // Both references point to the SAME array object\n        int[] original = {1, 2, 3};\n        int[] alias    = original;\n        alias[0] = 99;\n\n        System.out.println(\"\\nAfter alias[0] = 99:\");\n        System.out.println(\"original[0]: \" + original[0]); // 99 too!\n        System.out.println(\"alias[0]   : \" + alias[0]);\n        System.out.println(\"Same object: \" + (original == alias)); // true\n    }\n}",
+"output": "greeting: Hello\ncopy    : Hello\n\nAfter alias[0] = 99:\noriginal[0]: 99\nalias[0]   : 99\nSame object: true",
+"points": [
+"Reference types store an address to the object in heap memory.",
+"Assigning one reference to another does NOT copy the object.",
+"<code>String</code> is a special immutable reference type."
+]
+},
+{
+"id": 4,
+"title": "Type Casting",
+"desc": "Demonstrate both widening (implicit) and narrowing (explicit) type casting. Also show casting between <code>char</code> and <code>int</code>.",
+"code": "public class TypeCastingTask {\n    public static void main(String[] args) {\n        // Widening — automatic, no data loss\n        int    intVal    = 150;\n        long   longVal   = intVal;\n        float  floatVal  = longVal;\n        double doubleVal = floatVal;\n        System.out.println(\"int -> long  : \" + longVal);\n        System.out.println(\"long -> float: \" + floatVal);\n        System.out.println(\"float->double: \" + doubleVal);\n\n        // Narrowing — explicit cast, may lose data (truncates, does NOT round)\n        double pi    = 3.99999;\n        int    piInt = (int) pi;\n        System.out.println(\"\\n3.99999 cast to int: \" + piInt); // 3, not 4\n\n        // char <-> int\n        char letter = 'A';\n        int  ascii  = letter;           // widening\n        char next   = (char)(ascii + 1); // narrowing\n        System.out.println(\"\\n'A' as int    : \" + ascii);\n        System.out.println(\"ascii+1 as char: \" + next); // B\n    }\n}",
+"output": "int -> long  : 150\nlong -> float: 150.0\nfloat->double: 150.0\n\n3.99999 cast to int: 3\n\n'A' as int    : 65\nascii+1 as char: B",
+"points": [
+"Widening conversions are automatic and safe — no data loss.",
+"Narrowing requires an explicit cast and truncates (does NOT round).",
+"<code>char</code> values map to Unicode/ASCII integer values."
+]
+},
+{
+"id": 5,
+"title": "Operators",
+"desc": "Write a program demonstrating arithmetic, comparison, logical, compound assignment, bitwise, and ternary operators.",
+"code": "public class OperatorsTask {\n    public static void main(String[] args) {\n        int a = 10, b = 3;\n\n        System.out.println(\"a + b = \" + (a + b));\n        System.out.println(\"a / b = \" + (a / b));  // integer division → 3\n        System.out.println(\"a % b = \" + (a % b));  // remainder → 1\n\n        boolean x = true, y = false;\n        System.out.println(\"x && y : \" + (x && y));\n        System.out.println(\"x || y : \" + (x || y));\n\n        int c = 10;\n        c += 5;  System.out.println(\"c += 5  -> \" + c);\n        c *= 2;  System.out.println(\"c *= 2  -> \" + c);\n\n        System.out.println(\"5 & 3 = \" + (5 & 3));   // AND\n        System.out.println(\"5 | 3 = \" + (5 | 3));   // OR\n        System.out.println(\"5 ^ 3 = \" + (5 ^ 3));   // XOR\n        System.out.println(\"5 << 1= \" + (5 << 1));  // left shift\n\n        String result = (a > b) ? \"a is greater\" : \"b is greater\";\n        System.out.println(result);\n    }\n}",
+"output": "a + b = 13\na / b = 3\na % b = 1\nx && y : false\nx || y : true\nc += 5  -> 15\nc *= 2  -> 30\n5 & 3 = 1\n5 | 3 = 7\n5 ^ 3 = 6\n5 << 1= 10\na is greater",
+"points": [
+"Integer division truncates; cast to <code>double</code> for decimal results.",
+"<code>%</code> gives the remainder — great for even/odd: <code>n % 2 == 0</code>.",
+"Short-circuit: <code>&&</code> stops at first <code>false</code>, <code>||</code> at first <code>true</code>."
+]
+},
+{
+"id": 6,
+"title": "Input & Output",
+"desc": "Ask the user for first name, last name, and age, then print a greeting using <code>Scanner</code> and <code>printf</code>.",
+"code": "import java.util.Scanner;\n\npublic class InputOutputTask {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n\n        System.out.print(\"Enter first name: \");\n        String firstName = scanner.next();\n\n        System.out.print(\"Enter last name: \");\n        String lastName = scanner.next();\n\n        System.out.print(\"Enter age: \");\n        int age = scanner.nextInt();\n\n        System.out.println(\"Hello, \" + firstName + \" \" + lastName + \"!\");\n        System.out.printf(\"You are %d years old.%n\", age);\n        System.out.printf(\"In 10 years you will be %d.%n\", age + 10);\n\n        scanner.close();\n    }\n}",
+"output": "Enter first name: John\nEnter last name: Doe\nEnter age: 25\nHello, John Doe!\nYou are 25 years old.\nIn 10 years you will be 35.",
+"points": [
+"Always <code>import java.util.Scanner</code>.",
+"<code>next()</code> reads one token; <code>nextLine()</code> reads the full line.",
+"<code>%n</code> in <code>printf</code> is the platform-independent newline.",
+"Close the scanner with <code>scanner.close()</code>."
+]
+},
+{
+"id": 7,
+"title": "Comments",
+"desc": "Write a class demonstrating all three comment types — single-line, multi-line, and Javadoc — for a rectangle area method.",
+"code": "/**\n * Utility class for geometry calculations.\n * @author Alice\n * @version 1.0\n */\npublic class CommentsTask {\n\n    /**\n     * Calculates the area of a rectangle.\n     * @param width  the width (positive)\n     * @param height the height (positive)\n     * @return area as a double\n     */\n    public static double rectangleArea(double width, double height) {\n        // Multiply width by height\n        return width * height;\n    }\n\n    public static void main(String[] args) {\n        /*\n         * Multi-line: testing rectangleArea\n         * with a 5 x 3 rectangle.\n         */\n        double area = rectangleArea(5.0, 3.0);\n        System.out.println(\"Area: \" + area); // inline comment\n    }\n}",
+"output": "Area: 15.0",
+"points": [
+"<code>//</code> for single-line comments.",
+"<code>/* ... */</code> for multi-line block comments.",
+"<code>/** ... */</code> for Javadoc — processed by IDEs and the <code>javadoc</code> tool.",
+"Javadoc tags: <code>@param</code>, <code>@return</code>, <code>@throws</code>, <code>@author</code>."
+]
+},
+{
+"id": 8,
+"title": "Naming Conventions",
+"desc": "Rewrite the poorly named code below following Java naming conventions for classes, methods, variables, constants, and packages.",
+"badCode": "public class my_class {\n    static final int maxsize = 100;\n    int MyValue = 5;\n    void PrintHello() { System.out.println(\"hello\"); }\n}",
+"code": "// Package: all lowercase, dot-separated\npackage com.example.demo;\n\npublic class NamingConventions {          // PascalCase\n\n    static final int MAX_SIZE = 100;      // UPPER_SNAKE_CASE\n\n    int myValue = 5;                      // camelCase\n\n    void printHello() {                   // camelCase, verb-first\n        System.out.println(\"hello\");\n    }\n\n    boolean isEmpty() {                   // boolean: prefix is/has\n        return myValue == 0;\n    }\n\n    public static void main(String[] args) {\n        NamingConventions obj = new NamingConventions();\n        obj.printHello();\n        System.out.println(\"Empty: \" + obj.isEmpty());\n        System.out.println(\"Max: \"   + MAX_SIZE);\n    }\n}",
+"output": "hello\nEmpty: false\nMax: 100",
+"table": {
+"headers": [
+"Element",
+"Convention",
+"Example"
+],
+"rows": [
+[
+"Class",
+"PascalCase",
+"MyClass"
+],
+[
+"Method",
+"camelCase",
+"printValue()"
+],
+[
+"Variable",
+"camelCase",
+"myValue"
+],
+[
+"Constant",
+"UPPER_SNAKE_CASE",
+"MAX_SIZE"
+],
+[
+"Package",
+"all lowercase",
+"com.example.app"
+]
+]
+}
+},
+{
+"id": 9,
+"title": "If-Else Statements",
+"desc": "Read a score (0–100) and print the letter grade: A (90+), B (80–89), C (70–79), D (60–69), F (below 60). Handle invalid input.",
+"code": "import java.util.Scanner;\n\npublic class IfElseTask {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.print(\"Enter score (0-100): \");\n        int score = sc.nextInt();\n        String grade;\n\n        if (score < 0 || score > 100) {\n            grade = \"Invalid\";\n        } else if (score >= 90) {\n            grade = \"A\";\n        } else if (score >= 80) {\n            grade = \"B\";\n        } else if (score >= 70) {\n            grade = \"C\";\n        } else if (score >= 60) {\n            grade = \"D\";\n        } else {\n            grade = \"F\";\n        }\n        System.out.println(\"Grade: \" + grade);\n        sc.close();\n    }\n}",
+"output": "Enter score: 85  → Grade: B\nEnter score: 42  → Grade: F\nEnter score: 110 → Grade: Invalid",
+"points": [
+"Order matters — check from highest value down.",
+"Always include an <code>else</code> fallback.",
+"Combine conditions with <code>&&</code> and <code>||</code>."
+]
+},
+{
+"id": 10,
+"title": "Switch Statement",
+"desc": "Take a day number (1–7) and print the day name using both the traditional <code>switch</code> and the modern switch expression (Java 14+).",
+"code": "public class SwitchTask {\n    public static void main(String[] args) {\n        int day = 3;\n\n        // Traditional — needs break to prevent fall-through\n        switch (day) {\n            case 1: System.out.println(\"Monday\");    break;\n            case 2: System.out.println(\"Tuesday\");   break;\n            case 3: System.out.println(\"Wednesday\"); break;\n            case 4: System.out.println(\"Thursday\");  break;\n            case 5: System.out.println(\"Friday\");    break;\n            case 6: System.out.println(\"Saturday\");  break;\n            case 7: System.out.println(\"Sunday\");    break;\n            default: System.out.println(\"Invalid\");\n        }\n\n        // Modern switch expression (Java 14+) — no fall-through\n        String name = switch (day) {\n            case 1 -> \"Monday\";   case 2 -> \"Tuesday\";\n            case 3 -> \"Wednesday\";case 4 -> \"Thursday\";\n            case 5 -> \"Friday\";   case 6 -> \"Saturday\";\n            case 7 -> \"Sunday\";   default -> \"Invalid\";\n        };\n        System.out.println(\"Modern: \" + name);\n    }\n}",
+"output": "Wednesday\nModern: Wednesday",
+"points": [
+"Always add <code>break</code> in traditional switch to prevent fall-through.",
+"Modern switch expressions (<code>-></code>) are cleaner and don't fall through.",
+"<code>switch</code> works with <code>int</code>, <code>char</code>, <code>String</code>, and <code>enum</code>."
+]
+},
+{
+"id": 11,
+"title": "For Loop",
+"desc": "Use a <code>for</code> loop to: (1) print 1–10, (2) sum 1–100, and (3) print a multiplication table.",
+"code": "public class ForLoopTask {\n    public static void main(String[] args) {\n        // 1 to 10\n        for (int i = 1; i <= 10; i++) System.out.print(i + \" \");\n        System.out.println();\n\n        // Sum 1 to 100\n        int sum = 0;\n        for (int i = 1; i <= 100; i++) sum += i;\n        System.out.println(\"Sum 1-100: \" + sum);\n\n        // Multiplication table for 7\n        for (int i = 1; i <= 10; i++)\n            System.out.printf(\"7 x %2d = %d%n\", i, 7 * i);\n    }\n}",
+"output": "1 2 3 4 5 6 7 8 9 10\nSum 1-100: 5050\n7 x  1 = 7\n7 x  2 = 14\n...\n7 x 10 = 70",
+"points": [
+"Structure: <code>for (init; condition; update)</code>.",
+"Loop variable is scoped to the <code>for</code> block.",
+"Iterate backwards: <code>for (int i = 10; i >= 1; i--)</code>."
+]
+},
+{
+"id": 12,
+"title": "While Loop",
+"desc": "Use a <code>while</code> loop to keep asking the user to guess a secret number, and count the digits of an integer.",
+"code": "import java.util.Scanner;\n\npublic class WhileLoopTask {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int secret = 42, guess = -1, tries = 0;\n        while (guess != secret) {\n            System.out.print(\"Guess (1-100): \");\n            guess = sc.nextInt(); tries++;\n            if (guess < secret)      System.out.println(\"Too low!\");\n            else if (guess > secret) System.out.println(\"Too high!\");\n        }\n        System.out.println(\"Correct! Tries: \" + tries);\n\n        int n = 123456, count = 0;\n        int temp = Math.abs(n);\n        if (temp == 0) count = 1;\n        else while (temp > 0) { temp /= 10; count++; }\n        System.out.println(\"Digits in \" + n + \": \" + count);\n        sc.close();\n    }\n}",
+"output": "Guess: 20 → Too low!\nGuess: 60 → Too high!\nGuess: 42 → Correct! Tries: 3\nDigits in 123456: 6",
+"points": [
+"Use <code>while</code> when the number of iterations is unknown.",
+"Ensure the condition eventually becomes <code>false</code> to avoid infinite loops.",
+"<code>Math.abs()</code> handles negatives safely."
+]
+},
+{
+"id": 13,
+"title": "Do-While Loop",
+"desc": "Write a menu-driven calculator using <code>do-while</code> that shows options (Add 10, Subtract 5, Quit) until the user quits.",
+"code": "import java.util.Scanner;\n\npublic class DoWhileTask {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int choice; double result = 0;\n        do {\n            System.out.println(\"1. +10  2. -5  3. Quit  [current: \" + result + \"]\");\n            choice = sc.nextInt();\n            switch (choice) {\n                case 1 -> result += 10;\n                case 2 -> result -= 5;\n                case 3 -> System.out.println(\"Bye!\");\n                default -> System.out.println(\"Invalid.\");\n            }\n        } while (choice != 3);\n        sc.close();\n    }\n}",
+"output": "1. +10  2. -5  3. Quit  [current: 0.0]\n1 → current: 10.0\n2 → current: 5.0\n3 → Bye!",
+"points": [
+"<code>do-while</code> always executes the body at least once.",
+"Perfect for menus — you always want to show options at least once.",
+"Condition is checked <em>after</em> the loop body."
+]
+},
+{
+"id": 14,
+"title": "Enhanced For Loop",
+"desc": "Use the for-each loop to find the max in an int array, and iterate over a list of fruits.",
+"code": "import java.util.List;\n\npublic class EnhancedForLoopTask {\n    public static void main(String[] args) {\n        int[] numbers = {34, 7, 23, 90, 12, 56, 3};\n        int max = numbers[0];\n        for (int n : numbers) if (n > max) max = n;\n        System.out.println(\"Max: \" + max);\n\n        List<String> fruits = List.of(\"Apple\", \"Banana\", \"Cherry\", \"Mango\");\n        for (String fruit : fruits) System.out.println(\"  - \" + fruit);\n    }\n}",
+"output": "Max: 90\n  - Apple\n  - Banana\n  - Cherry\n  - Mango",
+"points": [
+"Syntax: <code>for (Type element : collection)</code>.",
+"Works with arrays, <code>List</code>, <code>Set</code>, and any <code>Iterable</code>.",
+"Cannot modify the collection or access the index — use regular <code>for</code> for that."
+]
+},
+{
+"id": 15,
+"title": "Break & Continue",
+"desc": "Demonstrate <code>break</code> by stopping when a target is found, and <code>continue</code> by skipping even numbers while printing 1–20.",
+"code": "public class BreakContinueTask {\n    public static void main(String[] args) {\n        int[] data = {5, 13, 8, 21, 4, 99, 17};\n        int target = 4, idx = -1;\n        for (int i = 0; i < data.length; i++) {\n            if (data[i] == target) { idx = i; break; }\n        }\n        System.out.println(\"Found \" + target + \" at index: \" + idx);\n\n        System.out.print(\"Odd 1-20: \");\n        for (int i = 1; i <= 20; i++) {\n            if (i % 2 == 0) continue;\n            System.out.print(i + \" \");\n        }\n        System.out.println();\n    }\n}",
+"output": "Found 4 at index: 4\nOdd 1-20: 1 3 5 7 9 11 13 15 17 19",
+"points": [
+"<code>break</code> exits the entire loop immediately.",
+"<code>continue</code> skips the current iteration and moves to the next.",
+"Both apply to the innermost loop by default."
+]
+},
+{
+"id": 16,
+"title": "Labeled Statements",
+"desc": "Use a labeled <code>break</code> to exit an outer loop from within a nested loop when i=2, j=3 is reached.",
+"code": "public class LabeledStatementsTask {\n    public static void main(String[] args) {\n        outer:\n        for (int i = 0; i < 5; i++) {\n            for (int j = 0; j < 5; j++) {\n                if (i == 2 && j == 3) {\n                    System.out.println(\"Breaking at i=\" + i + \", j=\" + j);\n                    break outer;\n                }\n                System.out.print(\"(\" + i + \",\" + j + \") \");\n            }\n            System.out.println();\n        }\n        System.out.println(\"Loop ended.\");\n\n        // Labeled continue — skip entire row when i==1\n        outerLoop:\n        for (int i = 0; i < 3; i++) {\n            for (int j = 0; j < 3; j++) {\n                if (i == 1) continue outerLoop;\n                System.out.print(\"(\" + i + \",\" + j + \") \");\n            }\n            System.out.println();\n        }\n    }\n}",
+"output": "(0,0) (0,1) ... (2,0) (2,1) (2,2) Breaking at i=2, j=3\nLoop ended.\n(0,0) (0,1) (0,2)\n(2,0) (2,1) (2,2)",
+"points": [
+"Label syntax: <code>labelName:</code> before the loop.",
+"<code>break label</code> exits the labeled loop; <code>continue label</code> advances its next iteration.",
+"Use sparingly — labeled jumps reduce readability."
+]
+},
+{
+"id": 17,
+"title": "String Basics",
+"desc": "Declare strings via a literal and <code>new</code>. Access characters, find length, and concatenate.",
+"code": "public class StringBasicsTask {\n    public static void main(String[] args) {\n        String s1 = \"Hello\";              // String Pool\n        String s2 = new String(\"World\"); // new heap object\n\n        System.out.println(\"Length  : \" + s1.length());\n        System.out.println(\"charAt 0: \" + s1.charAt(0));\n        System.out.println(\"Last    : \" + s1.charAt(s1.length() - 1));\n\n        String s3 = s1 + \", \" + s2 + \"!\";\n        System.out.println(\"Concat  : \" + s3);\n        System.out.println(\"concat(): \" + s1.concat(\" Java\"));\n\n        System.out.println(\"isEmpty : \" + \"\".isEmpty());\n        System.out.println(\"isBlank : \" + \"   \".isBlank()); // Java 11+\n    }\n}",
+"output": "Length  : 5\ncharAt 0: H\nLast    : o\nConcat  : Hello, World!\nconcat(): Hello Java\nisEmpty : true\nisBlank : true",
+"points": [
+"Literals go to the String Pool; <code>new String()</code> creates a new heap object.",
+"Strings are zero-indexed; first char is at index 0.",
+"<code>length()</code> is a method (with parentheses), unlike array's <code>length</code> field."
+]
+},
+{
+"id": 18,
+"title": "String Methods",
+"desc": "Given <code>\"  Hello, World!  \"</code>, apply at least 8 different <code>String</code> methods.",
+"code": "public class StringMethodsTask {\n    public static void main(String[] args) {\n        String s = \"  Hello, World!  \";\n        System.out.println(\"trim()      : '\" + s.trim() + \"'\");\n        System.out.println(\"toUpper()   : \" + s.trim().toUpperCase());\n        System.out.println(\"toLower()   : \" + s.trim().toLowerCase());\n        System.out.println(\"replace()   : \" + s.trim().replace(\"World\", \"Java\"));\n        System.out.println(\"contains()  : \" + s.contains(\"World\"));\n        System.out.println(\"startsWith(): \" + s.trim().startsWith(\"Hello\"));\n        System.out.println(\"indexOf()   : \" + s.indexOf(\"World\"));\n        System.out.println(\"substring() : \" + s.trim().substring(7, 12));\n        String[] parts = s.trim().split(\", \");\n        System.out.println(\"split[0]    : \" + parts[0]);\n        System.out.println(\"split[1]    : \" + parts[1]);\n    }\n}",
+"output": "trim()      : 'Hello, World!'\ntoUpper()   : HELLO, WORLD!\ntoLower()   : hello, world!\nreplace()   : Hello, Java!\ncontains()  : true\nstartsWith(): true\nindexOf()   : 9\nsubstring() : World\nsplit[0]    : Hello\nsplit[1]    : World!",
+"points": [
+"All <code>String</code> methods return a <em>new</em> string — originals are never modified.",
+"<code>strip()</code> (Java 11+) is preferred over <code>trim()</code> for Unicode whitespace.",
+"<code>substring(start, end)</code> — the <code>end</code> index is exclusive."
+]
+},
+{
+"id": 19,
+"title": "String Immutability",
+"desc": "Demonstrate that strings are immutable. Show what happens in memory when you 'modify' a string, and why this matters for performance.",
+"code": "public class StringImmutabilityTask {\n    public static void main(String[] args) {\n        String s = \"Hello\";\n        System.out.println(\"Before id: \" + System.identityHashCode(s));\n        s = s + \" World\"; // creates a NEW object; old one may be GC'd\n        System.out.println(\"After  id: \" + System.identityHashCode(s)); // different!\n\n        // String Pool — literals are reused\n        String a = \"Java\";\n        String b = \"Java\";\n        String c = new String(\"Java\");\n        System.out.println(\"a == b  (pool): \" + (a == b));    // true\n        System.out.println(\"a == c  (new) : \" + (a == c));    // false\n        System.out.println(\"a.equals(c)   : \" + a.equals(c)); // true\n\n        // Performance: bad (many temp objects) vs good (StringBuilder)\n        String bad = \"\";\n        for (int i = 0; i < 5; i++) bad += i;\n        System.out.println(\"bad concat   : \" + bad);\n\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < 5; i++) sb.append(i);\n        System.out.println(\"StringBuilder: \" + sb);\n    }\n}",
+"output": "Before id: 12345678\nAfter  id: 98765432\na == b  (pool): true\na == c  (new) : false\na.equals(c)   : true\nbad concat   : 01234\nStringBuilder: 01234",
+"points": [
+"Once created, a <code>String</code>'s content cannot change.",
+"Every 'modification' creates a new object; the variable just points to it.",
+"Always use <code>.equals()</code> for content comparison, never <code>==</code>.",
+"Use <code>StringBuilder</code> for repeated modifications in loops."
+]
+},
+{
+"id": 20,
+"title": "StringBuilder",
+"desc": "Build a sentence word by word using <code>StringBuilder</code>. Then reverse it, replace a word, delete a range, and insert at a position.",
+"code": "public class StringBuilderTask {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"The\").append(\" quick\").append(\" brown\").append(\" fox\");\n        System.out.println(\"append : \" + sb);\n\n        sb.insert(4, \" very\");\n        System.out.println(\"insert : \" + sb);\n\n        sb.delete(4, 9);\n        System.out.println(\"delete : \" + sb);\n\n        sb.replace(10, 15, \"red\");\n        System.out.println(\"replace: \" + sb);\n\n        sb.reverse();\n        System.out.println(\"reverse: \" + sb);\n        sb.reverse(); // restore\n\n        System.out.println(\"length : \" + sb.length());\n        System.out.println(\"result : \" + sb.toString());\n    }\n}",
+"output": "append : The quick brown fox\ninsert : The very quick brown fox\ndelete : The quick brown fox\nreplace: The quick red   fox\nreverse: xof der kciuq ehT\nlength : 19\nresult : The quick red   fox",
+"points": [
+"<code>StringBuilder</code> is mutable — modifications happen in-place.",
+"Not thread-safe — use <code>StringBuffer</code> for multi-threaded code.",
+"<code>append()</code> returns <code>this</code>, enabling method chaining.",
+"Default capacity is 16 chars; grows automatically."
+]
+},
+{
+"id": 21,
+"title": "StringBuffer",
+"desc": "Demonstrate <code>StringBuffer</code> in a multi-threaded scenario, showing it is synchronized and thread-safe. Compare with <code>StringBuilder</code>.",
+"code": "public class StringBufferTask {\n    public static void main(String[] args) throws InterruptedException {\n        StringBuffer buffer = new StringBuffer();\n\n        Thread t1 = new Thread(() -> { for (int i = 0; i < 5; i++) buffer.append(\"A\"); });\n        Thread t2 = new Thread(() -> { for (int i = 0; i < 5; i++) buffer.append(\"B\"); });\n\n        t1.start(); t2.start();\n        t1.join();  t2.join();\n\n        System.out.println(\"Result (10 chars): \" + buffer);\n        System.out.println(\"Length: \" + buffer.length()); // always 10\n\n        // API identical to StringBuilder\n        StringBuffer sb = new StringBuffer(\"Hello\");\n        sb.append(\" World\").insert(5, \",\");\n        System.out.println(\"Modified: \" + sb);\n    }\n}",
+"output": "Result (10 chars): AAAAABBBBB (order may vary)\nLength: 10\nModified: Hello, World",
+"table": {
+"headers": [
+"Feature",
+"StringBuilder",
+"StringBuffer"
+],
+"rows": [
+[
+"Thread-safe",
+"No",
+"Yes (synchronized)"
+],
+[
+"Performance",
+"Faster",
+"Slightly slower"
+],
+[
+"Use case",
+"Single-threaded",
+"Multi-threaded"
+]
+]
+}
+},
+{
+"id": 22,
+"title": "String Formatting",
+"desc": "Format a receipt-style output using <code>String.format()</code> and <code>printf()</code> with alignment, decimal precision, and padding.",
+"code": "public class StringFormattingTask {\n    public static void main(String[] args) {\n        System.out.printf(\"%-15s %5s %8s%n\", \"Item\", \"Qty\", \"Price\");\n        System.out.println(\"-\".repeat(30));\n        System.out.printf(\"%-15s %5d %8.2f%n\", \"Apple\",  3,  1.50);\n        System.out.printf(\"%-15s %5d %8.2f%n\", \"Banana\", 6,  0.30);\n        System.out.printf(\"%-15s %5d %8.2f%n\", \"Cherry\", 2, 12.00);\n        System.out.println(\"-\".repeat(30));\n        double total = 3*1.50 + 6*0.30 + 2*12.00;\n        System.out.printf(\"%-15s %5s %8.2f%n\", \"TOTAL\", \"\", total);\n\n        String msg = String.format(\"Hello, %s! You have %d messages.\", \"Bob\", 5);\n        System.out.println(\"\\n\" + msg);\n        System.out.printf(\"Hex: %x  |  Sci: %e%n\", 255, 123456.789);\n    }\n}",
+"output": "Item              Qty    Price\n------------------------------\nApple               3     1.50\nBanana              6     0.30\nCherry              2    12.00\n------------------------------\nTOTAL                    28.30\n\nHello, Bob! You have 5 messages.\nHex: ff  |  Sci: 1.234568e+05",
+"points": [
+"<code>%s</code>=String, <code>%d</code>=int, <code>%f</code>=float/double.",
+"<code>%-10s</code>=left-align in 10 chars; <code>%10s</code>=right-align.",
+"<code>%.2f</code>=2 decimal places.",
+"<code>%n</code>=platform-independent newline."
+]
+},
+{
+"id": 23,
+"title": "String Comparison",
+"desc": "Show the difference between <code>==</code> and <code>.equals()</code>, case-insensitive comparison, lexicographic ordering, and prefix/suffix checking.",
+"code": "public class StringComparisonTask {\n    public static void main(String[] args) {\n        String s1 = \"Hello\";\n        String s2 = \"Hello\";\n        String s3 = new String(\"Hello\");\n\n        System.out.println(\"s1 == s2 (pool) : \" + (s1 == s2));        // true\n        System.out.println(\"s1 == s3 (new)  : \" + (s1 == s3));        // false\n        System.out.println(\"s1.equals(s3)   : \" + s1.equals(s3));     // true\n        System.out.println(\"equalsIgnoreCase: \" + s1.equalsIgnoreCase(\"hello\"));\n\n        int cmp = \"apple\".compareTo(\"banana\");\n        System.out.println(\"\\napple vs banana: \" + cmp); // negative\n        System.out.println(\"First alpha     : \" + (cmp < 0 ? \"apple\" : \"banana\"));\n\n        String url = \"https://example.com/page\";\n        System.out.println(\"\\nstartsWith https: \" + url.startsWith(\"https\"));\n        System.out.println(\"endsWith   /page: \" + url.endsWith(\"/page\"));\n    }\n}",
+"output": "s1 == s2 (pool) : true\ns1 == s3 (new)  : false\ns1.equals(s3)   : true\nequalsIgnoreCase: true\n\napple vs banana: -1\nFirst alpha     : apple\n\nstartsWith https: true\nendsWith   /page: true",
+"points": [
+"Always use <code>.equals()</code> to compare string content; never <code>==</code>.",
+"<code>compareTo()</code> returns: negative (less), 0 (equal), positive (greater).",
+"Safe null-check: <code>\"literal\".equals(variable)</code> avoids NPE."
+]
+},
+{
+"id": 24,
+"title": "Regular Expressions",
+"desc": "Use regex to validate an email, extract all numbers from a string, and collapse multiple spaces into one.",
+"code": "import java.util.regex.*;\n\npublic class RegularExpressionsTask {\n    public static void main(String[] args) {\n        // Validate email\n        String emailRe = \"^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$\";\n        for (String e : new String[]{\"user@example.com\", \"bad@\", \"a@b.io\"})\n            System.out.printf(\"%-20s -> %s%n\", e, e.matches(emailRe) ? \"valid\" : \"invalid\");\n\n        // Extract numbers\n        String text = \"Order 42 has 3 items worth $99 and 2 extras\";\n        Matcher m = Pattern.compile(\"\\d+\").matcher(text);\n        System.out.print(\"Numbers: \");\n        while (m.find()) System.out.print(m.group() + \" \");\n        System.out.println();\n\n        // Collapse spaces\n        String messy = \"Hello    World   from   Java\";\n        System.out.println(\"Cleaned: '\" + messy.replaceAll(\"\\s+\", \" \") + \"'\");\n    }\n}",
+"output": "user@example.com     -> valid\nbad@                 -> invalid\na@b.io               -> valid\nNumbers: 42 3 99 2\nCleaned: 'Hello World from Java'",
+"points": [
+"<code>matches()</code> checks if the entire string matches.",
+"<code>Pattern.compile()</code> + <code>Matcher</code> needed for finding/extracting.",
+"Double backslash in Java strings: <code>\\\\d</code> becomes regex <code>\\d</code>."
+]
+},
+{
+"id": 25,
+"title": "Arrays Basics",
+"desc": "Declare and initialize arrays in multiple ways. Access elements, iterate, and understand <code>length</code>.",
+"code": "import java.util.Arrays;\n\npublic class ArraysBasicsTask {\n    public static void main(String[] args) {\n        int[] a = new int[5];\n        int[] b = {10, 20, 30, 40, 50};\n        int[] c = new int[]{1, 2, 3};\n\n        a[0] = 100; a[4] = 500;\n        System.out.println(\"a[0]=\" + a[0] + \", a[4]=\" + a[4]);\n        System.out.println(\"b.length: \" + b.length);\n        System.out.print(\"Array b: \");\n        for (int v : b) System.out.print(v + \" \");\n        System.out.println();\n        System.out.println(\"Array c: \" + Arrays.toString(c));\n\n        try {\n            System.out.println(b[10]);\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"Caught: \" + e.getMessage());\n        }\n    }\n}",
+"output": "a[0]=100, a[4]=500\nb.length: 5\nArray b: 10 20 30 40 50\nArray c: [1, 2, 3]\nCaught: Index 10 out of bounds for length 5",
+"points": [
+"Arrays are fixed size — length cannot change after creation.",
+"Default values: <code>int[]</code>→0, <code>boolean[]</code>→false, <code>String[]</code>→null.",
+"<code>length</code> is a field (no parentheses), unlike <code>String.length()</code>."
+]
+},
+{
+"id": 26,
+"title": "Array Operations",
+"desc": "Without library methods: find min/max, calculate average, and reverse an array in-place.",
+"code": "public class ArrayOperationsTask {\n    public static void main(String[] args) {\n        int[] nums = {64, 25, 12, 92, 38, 7, 55};\n        int min = nums[0], max = nums[0], sum = 0;\n        for (int n : nums) {\n            if (n < min) min = n;\n            if (n > max) max = n;\n            sum += n;\n        }\n        System.out.println(\"Min    : \" + min);\n        System.out.println(\"Max    : \" + max);\n        System.out.printf (\"Average: %.2f%n\", (double) sum / nums.length);\n\n        // Two-pointer reverse\n        int l = 0, r = nums.length - 1;\n        while (l < r) { int t = nums[l]; nums[l++] = nums[r]; nums[r--] = t; }\n        System.out.print(\"Reversed: \");\n        for (int n : nums) System.out.print(n + \" \");\n    }\n}",
+"output": "Min    : 7\nMax    : 92\nAverage: 41.86\nReversed: 55 7 38 92 12 25 64",
+"points": [
+"Two-pointer reverse is O(n/2) swaps — efficient in-place.",
+"Cast to <code>double</code> before division to avoid truncation.",
+"Initialize min/max with <code>nums[0]</code>, not 0 — arrays may contain negatives."
+]
+},
+{
+"id": 27,
+"title": "Multidimensional Arrays",
+"desc": "Create a 3×3 multiplication table using a 2D array. Also demonstrate a jagged (ragged) array.",
+"code": "public class MultidimensionalArraysTask {\n    public static void main(String[] args) {\n        int[][] matrix = new int[3][3];\n        for (int i = 0; i < 3; i++)\n            for (int j = 0; j < 3; j++)\n                matrix[i][j] = (i + 1) * (j + 1);\n\n        System.out.println(\"3x3 Table:\");\n        for (int[] row : matrix) {\n            for (int v : row) System.out.printf(\"%4d\", v);\n            System.out.println();\n        }\n\n        // Jagged — rows of different lengths\n        int[][] jagged = new int[4][];\n        for (int i = 0; i < jagged.length; i++) {\n            jagged[i] = new int[i + 1];\n            for (int j = 0; j <= i; j++) jagged[i][j] = i + j;\n        }\n        System.out.println(\"\\nJagged:\");\n        for (int[] row : jagged) {\n            for (int v : row) System.out.print(v + \" \");\n            System.out.println();\n        }\n    }\n}",
+"output": "3x3 Table:\n   1   2   3\n   2   4   6\n   3   6   9\n\nJagged:\n0\n1 2\n2 3 4\n3 4 5 6",
+"points": [
+"A 2D array is an array of arrays; access with <code>array[row][col]</code>.",
+"Jagged arrays allow rows of different sizes.",
+"Row length: <code>array[i].length</code>."
+]
+},
+{
+"id": 28,
+"title": "Arrays Class",
+"desc": "Use <code>java.util.Arrays</code> to sort, binary-search, fill, and compare arrays.",
+"code": "import java.util.Arrays;\n\npublic class ArraysClassTask {\n    public static void main(String[] args) {\n        int[] nums = {64, 25, 12, 92, 38, 7, 55};\n\n        Arrays.sort(nums);\n        System.out.println(\"Sorted : \" + Arrays.toString(nums));\n\n        int idx = Arrays.binarySearch(nums, 38);\n        System.out.println(\"38 at  : index \" + idx);\n\n        int[] filled = new int[5];\n        Arrays.fill(filled, 7);\n        System.out.println(\"Filled : \" + Arrays.toString(filled));\n\n        int[] a = {1, 2, 3}, b = {1, 2, 3}, c = {1, 2, 4};\n        System.out.println(\"a==b   : \" + Arrays.equals(a, b));\n        System.out.println(\"a==c   : \" + Arrays.equals(a, c));\n\n        int[][] mat = {{1, 2}, {3, 4}};\n        System.out.println(\"2D     : \" + Arrays.deepToString(mat));\n    }\n}",
+"output": "Sorted : [7, 12, 25, 38, 55, 64, 92]\n38 at  : index 3\nFilled : [7, 7, 7, 7, 7]\na==b   : true\na==c   : false\n2D     : [[1, 2], [3, 4]]",
+"points": [
+"<code>Arrays.sort()</code> uses dual-pivot quicksort — O(n log n).",
+"<code>Arrays.binarySearch()</code> requires the array to be sorted first.",
+"Use <code>Arrays.deepToString()</code> and <code>Arrays.deepEquals()</code> for multi-dimensional arrays."
+]
+},
+{
+"id": 29,
+"title": "Copying Arrays",
+"desc": "Demonstrate four ways to copy an array: manual loop, <code>System.arraycopy()</code>, <code>Arrays.copyOf()</code>, and <code>clone()</code>.",
+"code": "import java.util.Arrays;\n\npublic class CopyingArraysTask {\n    public static void main(String[] args) {\n        int[] orig = {1, 2, 3, 4, 5};\n\n        // Manual loop\n        int[] loop = new int[orig.length];\n        for (int i = 0; i < orig.length; i++) loop[i] = orig[i];\n\n        // System.arraycopy\n        int[] sys = new int[orig.length];\n        System.arraycopy(orig, 0, sys, 0, orig.length);\n\n        // Arrays.copyOf (can resize)\n        int[] copy     = Arrays.copyOf(orig, orig.length);\n        int[] extended = Arrays.copyOf(orig, 8);\n\n        // clone\n        int[] cloned = orig.clone();\n\n        orig[0] = 999;\n        System.out.println(\"Original : \" + Arrays.toString(orig));\n        System.out.println(\"Loop     : \" + Arrays.toString(loop));\n        System.out.println(\"Sys      : \" + Arrays.toString(sys));\n        System.out.println(\"copyOf   : \" + Arrays.toString(copy));\n        System.out.println(\"Extended : \" + Arrays.toString(extended));\n        System.out.println(\"Cloned   : \" + Arrays.toString(cloned));\n    }\n}",
+"output": "Original : [999, 2, 3, 4, 5]\nLoop     : [1, 2, 3, 4, 5]\nSys      : [1, 2, 3, 4, 5]\ncopyOf   : [1, 2, 3, 4, 5]\nExtended : [1, 2, 3, 4, 5, 0, 0, 0]\nCloned   : [1, 2, 3, 4, 5]",
+"points": [
+"All four create independent copies for primitive arrays.",
+"For object arrays, all create shallow copies (references copied, not objects).",
+"<code>Arrays.copyOf()</code> can also resize. <code>System.arraycopy()</code> is fastest for large arrays."
+]
+},
+{
+"id": 30,
+"title": "Methods Basics",
+"desc": "Write static methods: a void greeter, a square calculator, and a prime checker.",
+"code": "public class MethodsBasicsTask {\n\n    static void printWelcome() {\n        System.out.println(\"Welcome to Java Methods!\");\n    }\n\n    static int square(int n) {\n        return n * n;\n    }\n\n    static boolean isPrime(int n) {\n        if (n < 2) return false;\n        for (int i = 2; i <= Math.sqrt(n); i++)\n            if (n % i == 0) return false;\n        return true;\n    }\n\n    public static void main(String[] args) {\n        printWelcome();\n        System.out.println(\"7 squared = \" + square(7));\n        System.out.print(\"Primes to 20: \");\n        for (int i = 2; i <= 20; i++)\n            if (isPrime(i)) System.out.print(i + \" \");\n        System.out.println();\n    }\n}",
+"output": "Welcome to Java Methods!\n7 squared = 49\nPrimes to 20: 2 3 5 7 11 13 17 19",
+"points": [
+"<code>static</code> methods belong to the class — no object needed.",
+"<code>void</code> methods return nothing; use bare <code>return;</code> to exit early.",
+"Check primality up to <code>Math.sqrt(n)</code> for O(√n) efficiency."
+]
+},
+{
+"id": 31,
+"title": "Method Parameters",
+"desc": "Demonstrate single parameter, multiple parameters, and simulate default parameters via overloading.",
+"code": "public class MethodParametersTask {\n\n    static void printSquare(int n) {\n        System.out.println(n + \"^2 = \" + (n * n));\n    }\n\n    static double bmi(double kg, double m) {\n        return kg / (m * m);\n    }\n\n    static void greet(String name, String g) {\n        System.out.println(g + \", \" + name + \"!\");\n    }\n    static void greet(String name) { greet(name, \"Hello\"); } // default\n\n    public static void main(String[] args) {\n        printSquare(5);\n        System.out.printf(\"BMI: %.2f%n\", bmi(70, 1.75));\n        greet(\"Alice\");\n        greet(\"Bob\", \"Good morning\");\n    }\n}",
+"output": "5^2 = 25\nBMI: 22.86\nHello, Alice!\nGood morning, Bob!",
+"points": [
+"Parameters are local to the method.",
+"Java has no default parameter values — use overloading instead.",
+"Argument order must match the parameter list."
+]
+},
+{
+"id": 32,
+"title": "Return Types",
+"desc": "Write methods with return types <code>int</code>, <code>double</code>, <code>boolean</code>, <code>String</code>, and <code>int[]</code>.",
+"code": "import java.util.Arrays;\n\npublic class ReturnTypesTask {\n\n    static int     add(int a, int b)         { return a + b; }\n    static double  divide(double a, double b){ return a / b; }\n    static boolean isEven(int n)             { return n % 2 == 0; }\n    static String  classify(int n) {\n        if (n > 0) return \"positive\";\n        if (n < 0) return \"negative\";\n        return \"zero\";\n    }\n    static int[] range(int start, int end) {\n        int[] arr = new int[end - start];\n        for (int i = 0; i < arr.length; i++) arr[i] = start + i;\n        return arr;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"add(3,4)     = \" + add(3, 4));\n        System.out.println(\"divide(7,2)  = \" + divide(7, 2));\n        System.out.println(\"isEven(8)    = \" + isEven(8));\n        System.out.println(\"classify(-3) = \" + classify(-3));\n        System.out.println(\"range(1,6)   = \" + Arrays.toString(range(1, 6)));\n    }\n}",
+"output": "add(3,4)     = 7\ndivide(7,2)  = 3.5\nisEven(8)    = true\nclassify(-3) = negative\nrange(1,6)   = [1, 2, 3, 4, 5]",
+"points": [
+"A method must return a value matching its type at every execution path.",
+"Early returns from multiple points are common for classification logic.",
+"Methods can return any type, including arrays and objects."
+]
+},
+{
+"id": 33,
+"title": "Method Overloading",
+"desc": "Create overloaded <code>area()</code> methods for a circle (1 param), rectangle (2 params), and triangle by 3 sides (Heron's formula).",
+"code": "public class MethodOverloadingTask {\n\n    static double area(double radius) {\n        return Math.PI * radius * radius;\n    }\n    static double area(double w, double h) {\n        return w * h;\n    }\n    static double area(double a, double b, double c) {\n        double s = (a + b + c) / 2;\n        return Math.sqrt(s * (s-a) * (s-b) * (s-c));\n    }\n\n    public static void main(String[] args) {\n        System.out.printf(\"Circle (r=5)   : %.4f%n\", area(5.0));\n        System.out.printf(\"Rectangle (4x6): %.4f%n\", area(4.0, 6.0));\n        System.out.printf(\"Triangle(3,4,5): %.4f%n\", area(3.0, 4.0, 5.0));\n    }\n}",
+"output": "Circle (r=5)   : 78.5398\nRectangle (4x6): 24.0000\nTriangle(3,4,5): 6.0000",
+"points": [
+"Methods are overloaded when they share a name but differ in parameter types or count.",
+"Compiler selects the right overload at compile time (static polymorphism).",
+"You cannot overload by return type alone."
+]
+},
+{
+"id": 34,
+"title": "Variable Arguments (Varargs)",
+"desc": "Write a varargs <code>sum()</code> accepting any number of integers, and a <code>printAll()</code> for any number of strings.",
+"code": "public class VarargsTask {\n\n    static int sum(int... numbers) {\n        int total = 0;\n        for (int n : numbers) total += n;\n        return total;\n    }\n\n    static void printAll(String label, String... items) {\n        System.out.print(label + \": \");\n        for (String s : items) System.out.print(s + \" \");\n        System.out.println();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(sum());\n            System.out.println(sum(5));\n        System.out.println(sum(1, 2, 3, 4, 5));\n        System.out.println(sum(new int[]{10, 20, 30}));\n\n        printAll(\"Colors\", \"red\", \"green\", \"blue\");\n        printAll(\"Empty\");\n    }\n}",
+"output": "0\n5\n15\n60\nColors: red green blue\nEmpty:",
+"points": [
+"Syntax: <code>Type... name</code> — must be the last parameter.",
+"Internally treated as an array — you can pass an array directly.",
+"A method can have only one varargs parameter."
+]
+},
+{
+"id": 35,
+"title": "Recursion",
+"desc": "Implement four classic recursive algorithms: factorial, Fibonacci, binary search, and Tower of Hanoi.",
+"code": "public class RecursionTask {\n\n    static long factorial(int n) {\n        if (n <= 1) return 1;\n        return n * factorial(n - 1);\n    }\n\n    static int fibonacci(int n) {\n        if (n <= 1) return n;\n        return fibonacci(n - 1) + fibonacci(n - 2);\n    }\n\n    static int binarySearch(int[] a, int t, int lo, int hi) {\n        if (lo > hi) return -1;\n        int mid = (lo + hi) / 2;\n        if (a[mid] == t) return mid;\n        return a[mid] < t ? binarySearch(a, t, mid+1, hi)\n                          : binarySearch(a, t, lo, mid-1);\n    }\n\n    static void hanoi(int n, char from, char to, char aux) {\n        if (n == 1) { System.out.println(\"Disk 1: \" + from + \" -> \" + to); return; }\n        hanoi(n-1, from, aux, to);\n        System.out.println(\"Disk \" + n + \": \" + from + \" -> \" + to);\n        hanoi(n-1, aux, to, from);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"5! = \" + factorial(5));\n        System.out.print(\"Fibonacci: \");\n        for (int i = 0; i < 8; i++) System.out.print(fibonacci(i) + \" \");\n        int[] sorted = {3, 7, 12, 19, 25, 38, 44};\n        System.out.println(\"\\nBinarySearch 25: \" + binarySearch(sorted, 25, 0, sorted.length-1));\n        System.out.println(\"\\nHanoi (3 disks):\");\n        hanoi(3, 'A', 'C', 'B');\n    }\n}",
+"output": "5! = 120\nFibonacci: 0 1 1 2 3 5 8 13\nBinarySearch 25: 4\n\nHanoi (3 disks):\nDisk 1: A -> C\nDisk 2: A -> B\nDisk 1: C -> B\nDisk 3: A -> C\nDisk 1: B -> A\nDisk 2: B -> C\nDisk 1: A -> C",
+"points": [
+"Every recursive method needs a base case to stop recursion.",
+"Without a base case → <code>StackOverflowError</code>.",
+"Recursive Fibonacci is O(2ⁿ) — use memoization or iteration for large n."
+]
+},
+{
+"id": 36,
+"title": "Pass by Value",
+"desc": "Demonstrate Java is strictly pass-by-value even for objects. Show reassigning a reference parameter has no effect on the caller, but mutating the object does.",
+"code": "import java.util.Arrays;\n\npublic class PassByValueTask {\n\n    static void tryChangeInt(int x) {\n        x = 999;\n        System.out.println(\"  inside (prim): \" + x);\n    }\n    static void tryReassign(int[] arr) {\n        arr = new int[]{99, 99, 99}; // only local ref changes\n        System.out.println(\"  inside (reassign): \" + Arrays.toString(arr));\n    }\n    static void mutate(int[] arr) {\n        arr[0] = 999; // modifies the actual heap object\n    }\n\n    public static void main(String[] args) {\n        int n = 42;\n        tryChangeInt(n);\n        System.out.println(\"After changeInt: \" + n); // still 42\n\n        int[] a = {1, 2, 3};\n        tryReassign(a);\n        System.out.println(\"After reassign : \" + Arrays.toString(a)); // unchanged\n\n        int[] b = {1, 2, 3};\n        mutate(b);\n        System.out.println(\"After mutate   : \" + Arrays.toString(b)); // [999,2,3]\n    }\n}",
+"output": "  inside (prim): 999\nAfter changeInt: 42\n  inside (reassign): [99, 99, 99]\nAfter reassign : [1, 2, 3]\nAfter mutate   : [999, 2, 3]",
+"points": [
+"Java is always pass-by-value — even for objects.",
+"For objects, the value passed is a copy of the reference.",
+"Reassigning the parameter only changes the local copy.",
+"Mutating the object's content affects the original."
+]
+},
+{
+"id": 37,
+"title": "Generics Basics",
+"desc": "Write a generic <code>Pair&lt;A, B&gt;</code> class that holds two values of any types, and a generic <code>printArray()</code> method. Show why generics are safer than using <code>Object</code>.",
+"code": "public class GenericsBasicsTask {\n\n    // Generic class\n    static class Pair<A, B> {\n        private A first;\n        private B second;\n\n        Pair(A first, B second) {\n            this.first = first;\n            this.second = second;\n        }\n\n        A getFirst()  { return first; }\n        B getSecond() { return second; }\n\n        @Override\n        public String toString() {\n            return \"(\" + first + \", \" + second + \")\";\n        }\n    }\n\n    // Generic method\n    static <T> void printArray(T[] arr) {\n        for (T item : arr) System.out.print(item + \" \");\n        System.out.println();\n    }\n\n    public static void main(String[] args) {\n        Pair<String, Integer> p1 = new Pair<>(\"Alice\", 30);\n        Pair<Double, Boolean> p2 = new Pair<>(3.14, true);\n\n        System.out.println(\"Pair 1: \" + p1);\n        System.out.println(\"Name  : \" + p1.getFirst());\n        System.out.println(\"Age   : \" + p1.getSecond());\n        System.out.println(\"Pair 2: \" + p2);\n\n        Integer[] nums    = {1, 2, 3, 4, 5};\n        String[]  fruits  = {\"Apple\", \"Mango\", \"Cherry\"};\n        System.out.print(\"Ints   : \"); printArray(nums);\n        System.out.print(\"Strings: \"); printArray(fruits);\n    }\n}",
+"output": "Pair 1: (Alice, 30)\nName  : Alice\nAge   : 30\nPair 2: (3.14, true)\nInts   : 1 2 3 4 5\nStrings: Apple Mango Cherry",
+"points": [
+"Generics enable type-safe code without casting.",
+"Type parameters are specified in angle brackets: <code>class Box&lt;T&gt;</code>.",
+"Generics work only with reference types — use <code>Integer</code>, not <code>int</code>."
+]
+},
+{
+"id": 38,
+"title": "Generic Classes",
+"desc": "Build a generic <code>Stack&lt;T&gt;</code> class with <code>push</code>, <code>pop</code>, <code>peek</code>, <code>isEmpty</code>, and <code>size</code> methods. Use it with both <code>String</code> and <code>Integer</code>.",
+"code": "import java.util.ArrayList;\n\npublic class GenericClassesTask {\n\n    static class Stack<T> {\n        private ArrayList<T> data = new ArrayList<>();\n\n        void push(T item) {\n            data.add(item);\n        }\n\n        T pop() {\n            if (isEmpty()) throw new RuntimeException(\"Stack is empty\");\n            return data.remove(data.size() - 1);\n        }\n\n        T peek() {\n            if (isEmpty()) throw new RuntimeException(\"Stack is empty\");\n            return data.get(data.size() - 1);\n        }\n\n        boolean isEmpty() { return data.isEmpty(); }\n        int     size()    { return data.size(); }\n\n        @Override\n        public String toString() { return data.toString(); }\n    }\n\n    public static void main(String[] args) {\n        Stack<String> words = new Stack<>();\n        words.push(\"Java\");\n        words.push(\"is\");\n        words.push(\"fun\");\n        System.out.println(\"Stack  : \" + words);\n        System.out.println(\"Peek   : \" + words.peek());\n        System.out.println(\"Pop    : \" + words.pop());\n        System.out.println(\"After  : \" + words);\n\n        Stack<Integer> nums = new Stack<>();\n        for (int i = 1; i <= 5; i++) nums.push(i * 10);\n        System.out.println(\"\\nNums   : \" + nums);\n        System.out.println(\"Size   : \" + nums.size());\n        while (!nums.isEmpty()) System.out.print(nums.pop() + \" \");\n        System.out.println();\n    }\n}",
+"output": "Stack  : [Java, is, fun]\nPeek   : fun\nPop    : fun\nAfter  : [Java, is]\n\nNums   : [10, 20, 30, 40, 50]\nSize   : 5\n50 40 30 20 10",
+"points": [
+"A generic class can be instantiated with different types without code duplication.",
+"The type parameter <code>T</code> acts as a placeholder replaced at compile time.",
+"Multiple type parameters are possible: <code>class Map&lt;K, V&gt;</code>."
+]
+},
+{
+"id": 39,
+"title": "Generic Methods",
+"desc": "Write several standalone generic methods: one that swaps two elements in an array, one that finds the max of a list, and one that converts an array to a list.",
+"code": "import java.util.*;\n\npublic class GenericMethodsTask {\n\n    // Swap two elements in any array\n    static <T> void swap(T[] arr, int i, int j) {\n        T temp = arr[i];\n        arr[i] = arr[j];\n        arr[j] = temp;\n    }\n\n    // Max element — T must be Comparable\n    static <T extends Comparable<T>> T max(List<T> list) {\n        if (list.isEmpty()) throw new NoSuchElementException();\n        T result = list.get(0);\n        for (T item : list)\n            if (item.compareTo(result) > 0) result = item;\n        return result;\n    }\n\n    // Array to List\n    static <T> List<T> toList(T[] arr) {\n        return new ArrayList<>(Arrays.asList(arr));\n    }\n\n    public static void main(String[] args) {\n        Integer[] nums = {1, 2, 3, 4, 5};\n        System.out.println(\"Before swap: \" + Arrays.toString(nums));\n        swap(nums, 0, 4);\n        System.out.println(\"After swap : \" + Arrays.toString(nums));\n\n        List<Integer> ints    = Arrays.asList(3, 1, 4, 1, 5, 9, 2, 6);\n        List<String>  strings = Arrays.asList(\"banana\", \"apple\", \"cherry\");\n        System.out.println(\"Max int    : \" + max(ints));\n        System.out.println(\"Max string : \" + max(strings));\n\n        String[] fruits = {\"Mango\", \"Kiwi\", \"Peach\"};\n        List<String> fruitList = toList(fruits);\n        System.out.println(\"As list    : \" + fruitList);\n    }\n}",
+"output": "Before swap: [1, 2, 3, 4, 5]\nAfter swap : [5, 2, 3, 4, 1]\nMax int    : 9\nMax string : cherry\nAs list    : [Mango, Kiwi, Peach]",
+"points": [
+"Generic methods declare type parameters before the return type: <code>&lt;T&gt; void method()</code>.",
+"The compiler infers the type argument from the actual arguments passed.",
+"Bounded type parameters (<code>T extends Comparable&lt;T&gt;</code>) restrict which types can be used."
+]
+},
+{
+"id": 40,
+"title": "Bounded Type Parameters",
+"desc": "Write a generic <code>NumberBox&lt;T extends Number&gt;</code> class and a method that calculates the sum of a list of numbers using bounded type parameters.",
+"code": "import java.util.List;\n\npublic class BoundedTypeTask {\n\n    // Upper bound: T must be Number or a subclass\n    static class NumberBox<T extends Number> {\n        private T value;\n\n        NumberBox(T value) { this.value = value; }\n\n        double doubled()  { return value.doubleValue() * 2; }\n        boolean isWhole() { return value.doubleValue() == Math.floor(value.doubleValue()); }\n\n        @Override\n        public String toString() { return \"NumberBox[\" + value + \"]\"; }\n    }\n\n    // Sum a list of any numeric type\n    static <T extends Number> double sum(List<T> list) {\n        double total = 0;\n        for (T item : list) total += item.doubleValue();\n        return total;\n    }\n\n    public static void main(String[] args) {\n        NumberBox<Integer> intBox    = new NumberBox<>(42);\n        NumberBox<Double>  dblBox    = new NumberBox<>(3.14);\n        NumberBox<Long>    longBox   = new NumberBox<>(100L);\n\n        System.out.println(intBox  + \" doubled=\" + intBox.doubled()  + \" whole=\" + intBox.isWhole());\n        System.out.println(dblBox  + \" doubled=\" + dblBox.doubled()  + \" whole=\" + dblBox.isWhole());\n        System.out.println(longBox + \" doubled=\" + longBox.doubled() + \" whole=\" + longBox.isWhole());\n\n        List<Integer> ints    = List.of(1, 2, 3, 4, 5);\n        List<Double>  doubles = List.of(1.5, 2.5, 3.0);\n        System.out.println(\"\\nSum ints   : \" + sum(ints));\n        System.out.println(\"Sum doubles: \" + sum(doubles));\n    }\n}",
+"output": "NumberBox[42] doubled=84.0 whole=true\nNumberBox[3.14] doubled=6.28 whole=false\nNumberBox[100] doubled=200.0 whole=true\n\nSum ints   : 15.0\nSum doubles: 7.0",
+"points": [
+"<code>T extends Number</code> is an upper bound — only <code>Number</code> and its subclasses are accepted.",
+"Use <code>T extends A & B</code> to specify multiple bounds (one class + interfaces).",
+"Bounded types give access to the bound's methods (e.g., <code>.doubleValue()</code>)."
+]
+},
+{
+"id": 41,
+"title": "Wildcards",
+"desc": "Demonstrate the three wildcard forms: unbounded (<code>?</code>), upper bounded (<code>? extends</code>), and lower bounded (<code>? super</code>). Use them to print and sum lists of numbers.",
+"code": "import java.util.*;\n\npublic class WildcardsTask {\n\n    // Unbounded: reads anything as Object\n    static void printList(List<?> list) {\n        for (Object o : list) System.out.print(o + \" \");\n        System.out.println();\n    }\n\n    // Upper bounded: reads Numbers (producer — use extends)\n    static double sumList(List<? extends Number> list) {\n        double sum = 0;\n        for (Number n : list) sum += n.doubleValue();\n        return sum;\n    }\n\n    // Lower bounded: adds Integers into a list (consumer — use super)\n    static void addIntegers(List<? super Integer> list, int count) {\n        for (int i = 1; i <= count; i++) list.add(i);\n    }\n\n    public static void main(String[] args) {\n        List<Integer> ints    = Arrays.asList(1, 2, 3);\n        List<Double>  doubles = Arrays.asList(1.5, 2.5, 3.0);\n        List<String>  strings = Arrays.asList(\"a\", \"b\", \"c\");\n\n        System.out.print(\"Ints   : \"); printList(ints);\n        System.out.print(\"Doubles: \"); printList(doubles);\n        System.out.print(\"Strings: \"); printList(strings);\n\n        System.out.println(\"Sum ints   : \" + sumList(ints));\n        System.out.println(\"Sum doubles: \" + sumList(doubles));\n\n        List<Number> numbers = new ArrayList<>();\n        addIntegers(numbers, 5);\n        System.out.println(\"Added to Number list: \" + numbers);\n    }\n}",
+"output": "Ints   : 1 2 3\nDoubles: 1.5 2.5 3.0\nStrings: a b c\nSum ints   : 6.0\nSum doubles: 7.0\nAdded to Number list: [1, 2, 3, 4, 5]",
+"points": [
+"<code>List&lt;?&gt;</code> — unbounded: any type, read-only (except null).",
+"<code>List&lt;? extends T&gt;</code> — upper bound: read values as T (Producer Extends).",
+"<code>List&lt;? super T&gt;</code> — lower bound: write T values (Consumer Super).",
+"Remember PECS: <em>Producer Extends, Consumer Super</em>."
+]
+},
+{
+"id": 42,
+"title": "Type Erasure",
+"desc": "Demonstrate how Java's type erasure works: show that generic type info is removed at runtime, that all generic instances share the same class, and how to work around erasure with tokens.",
+"code": "import java.util.*;\n\npublic class TypeErasureTask {\n\n    static class Box<T> {\n        private T value;\n        Box(T v) { this.value = v; }\n        T get()  { return value; }\n    }\n\n    public static void main(String[] args) {\n        Box<String>  sBox = new Box<>(\"Hello\");\n        Box<Integer> iBox = new Box<>(42);\n\n        // At runtime, both are just \"Box\" — type info is erased\n        System.out.println(\"Same class? \" + (sBox.getClass() == iBox.getClass())); // true\n        System.out.println(\"Class name : \" + sBox.getClass().getName());\n\n        // Cannot use instanceof with generic types\n        // if (sBox instanceof Box<String>) — COMPILE ERROR\n        // Use raw type instead:\n        System.out.println(\"Is Box?    : \" + (sBox instanceof Box));\n\n        // Lists also share the same raw type\n        List<String>  ls = new ArrayList<>();\n        List<Integer> li = new ArrayList<>();\n        System.out.println(\"Same list class: \" + (ls.getClass() == li.getClass())); // true\n\n        // Workaround: pass Class<T> token to get type at runtime\n        System.out.println(\"\\nUsing class token:\");\n        printTyped(\"World\", String.class);\n        printTyped(100,     Integer.class);\n    }\n\n    static <T> void printTyped(T value, Class<T> clazz) {\n        System.out.println(\"Value: \" + value + \" | Type: \" + clazz.getSimpleName());\n    }\n}",
+"output": "Same class? true\nClass name : Box\nIs Box?    : true\nSame list class: true\n\nUsing class token:\nValue: World | Type: String\nValue: 100 | Type: Integer",
+"points": [
+"Type erasure removes generic type info at runtime — generics exist only at compile time.",
+"All instantiations of a generic type share one compiled class.",
+"Cannot use <code>instanceof</code> with parameterized types at runtime.",
+"Pass a <code>Class&lt;T&gt;</code> token as a method argument to preserve type info."
+]
+},
+{
+"id": 43,
+"title": "Generic Restrictions",
+"desc": "Explore what you cannot do with generics in Java: no primitive type params, no instantiation, no generic arrays, no static generic fields.",
+"code": "import java.util.*;\n\npublic class GenericRestrictionsTask {\n\n    static class Container<T> {\n        private T value;\n        // private static T staticField; // COMPILE ERROR — cannot use T in static context\n\n        Container(T value) { this.value = value; }\n\n        void demo() {\n            // Cannot do: T obj = new T(); — COMPILE ERROR\n            // Cannot do: T[] arr = new T[10]; — COMPILE ERROR\n            // Cannot do: if (value instanceof T) — COMPILE ERROR\n\n            // Workaround: use Object array and cast (like ArrayList does internally)\n            Object[] rawArr = new Object[5];\n            rawArr[0] = value;\n            System.out.println(\"Raw array[0]: \" + rawArr[0]);\n        }\n    }\n\n    public static void main(String[] args) {\n        // Cannot use primitives as type arguments\n        // Container<int> bad = new Container<>(5); // COMPILE ERROR\n        Container<Integer> ok = new Container<>(5); // use wrapper\n        ok.demo();\n\n        // Generic arrays are not allowed\n        // List<String>[] arr = new ArrayList<String>[5]; // COMPILE ERROR\n        // Workaround: use a raw type or List of Lists\n        @SuppressWarnings(\"unchecked\")\n        List<String>[] workaround = new ArrayList[5]; // unchecked warning\n        workaround[0] = new ArrayList<>();\n        workaround[0].add(\"OK\");\n        System.out.println(\"Array workaround: \" + workaround[0]);\n\n        // Overloading by erasure is forbidden\n        // void process(List<String> l) {}\n        // void process(List<Integer> l) {} // COMPILE ERROR — same erasure\n        System.out.println(\"\\nGeneric restrictions demonstrated.\");\n    }\n}",
+"output": "Raw array[0]: 5\nArray workaround: [OK]\n\nGeneric restrictions demonstrated.",
+"points": [
+"Primitives cannot be type arguments — use wrapper classes (<code>Integer</code>, <code>Double</code>).",
+"Cannot instantiate <code>new T()</code> — type is unknown at runtime.",
+"Cannot create generic arrays (<code>new T[n]</code>) — use <code>ArrayList&lt;T&gt;</code> instead.",
+"Cannot use type params in static fields or methods that belong to the class."
+]
+},
+{
+"id": 44,
+"title": "Lambda Expressions",
+"desc": "Replace anonymous inner classes with lambda expressions for <code>Runnable</code>, <code>Comparator</code>, and a custom <code>MathOperation</code> functional interface.",
+"code": "import java.util.*;\n\npublic class LambdaExpressionsTask {\n\n    @FunctionalInterface\n    interface MathOperation {\n        int operate(int a, int b);\n    }\n\n    public static void main(String[] args) {\n        // Runnable (no params, no return)\n        Runnable r = () -> System.out.println(\"Running!\");\n        r.run();\n\n        // MathOperation — various syntax forms\n        MathOperation add      = (a, b) -> a + b;\n        MathOperation multiply = (a, b) -> a * b;\n        MathOperation max      = (a, b) -> { return a > b ? a : b; }; // block body\n\n        System.out.println(\"5 + 3 = \" + add.operate(5, 3));\n        System.out.println(\"5 * 3 = \" + multiply.operate(5, 3));\n        System.out.println(\"max(5,3) = \" + max.operate(5, 3));\n\n        // Comparator for sorting\n        List<String> names = new ArrayList<>(Arrays.asList(\"Charlie\", \"Alice\", \"Bob\", \"Dave\"));\n        names.sort((a, b) -> a.compareTo(b));          // ascending\n        System.out.println(\"Sorted asc : \" + names);\n        names.sort((a, b) -> b.compareTo(a));          // descending\n        System.out.println(\"Sorted desc: \" + names);\n\n        // Capturing effectively final variable\n        String prefix = \"Hello, \";\n        names.forEach(name -> System.out.println(prefix + name));\n    }\n}",
+"output": "Running!\n5 + 3 = 8\n5 * 3 = 15\nmax(5,3) = 5\nSorted asc : [Alice, Bob, Charlie, Dave]\nSorted desc: [Dave, Charlie, Bob, Alice]\nHello, Dave\nHello, Charlie\nHello, Bob\nHello, Alice",
+"points": [
+"A lambda is a concise way to implement a <em>functional interface</em> (one abstract method).",
+"Syntax: <code>(params) -> expression</code> or <code>(params) -> { statements; }</code>.",
+"Lambdas can capture effectively final local variables from the enclosing scope.",
+"<code>@FunctionalInterface</code> annotation is optional but documents intent."
+]
+},
+{
+"id": 45,
+"title": "Method References",
+"desc": "Demonstrate the four types of method references: static, instance (on particular object), instance (on arbitrary object), and constructor references.",
+"code": "import java.util.*;\nimport java.util.function.*;\n\npublic class MethodReferencesTask {\n\n    static int doubleIt(int n) { return n * 2; }\n\n    static class Greeter {\n        String prefix;\n        Greeter(String p) { this.prefix = p; }\n        void greet(String name) { System.out.println(prefix + name); }\n    }\n\n    public static void main(String[] args) {\n        // 1. Static method reference: ClassName::staticMethod\n        Function<Integer, Integer> dbl = MethodReferencesTask::doubleIt;\n        System.out.println(\"Double 5: \" + dbl.apply(5));\n\n        // 2. Instance method on a particular object: instance::method\n        Greeter g = new Greeter(\"Hello, \");\n        Consumer<String> greet = g::greet;\n        greet.accept(\"Alice\");\n\n        // 3. Instance method on arbitrary object: ClassName::instanceMethod\n        List<String> names = Arrays.asList(\"Charlie\", \"Alice\", \"Bob\");\n        names.sort(String::compareTo);          // equivalent to (a,b) -> a.compareTo(b)\n        System.out.println(\"Sorted: \" + names);\n\n        // 4. Constructor reference: ClassName::new\n        Supplier<ArrayList<String>> listFactory = ArrayList::new;\n        ArrayList<String> list = listFactory.get();\n        list.add(\"Java\");\n        list.add(\"Rocks\");\n        System.out.println(\"List: \" + list);\n\n        // Common use — println as consumer\n        names.forEach(System.out::println);\n    }\n}",
+"output": "Double 5: 10\nHello, Alice\nSorted: [Alice, Bob, Charlie]\nList: [Java, Rocks]\nAlice\nBob\nCharlie",
+"points": [
+"Method references are a shorthand for certain lambdas: <code>ClassName::method</code>.",
+"Four kinds: static, bound instance, unbound instance, constructor.",
+"<code>System.out::println</code> is the most common method reference you'll see."
+]
+},
+{
+"id": 46,
+"title": "Streams Basics",
+"desc": "Create streams from a list and an array. Use <code>filter</code>, <code>map</code>, and <code>forEach</code>. Understand that streams are lazy and can only be consumed once.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class StreamsBasicsTask {\n    public static void main(String[] args) {\n        // Create stream from List\n        List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);\n\n        // filter + forEach\n        System.out.print(\"Even numbers: \");\n        nums.stream()\n            .filter(n -> n % 2 == 0)\n            .forEach(n -> System.out.print(n + \" \"));\n        System.out.println();\n\n        // map + collect\n        List<Integer> squared = nums.stream()\n            .map(n -> n * n)\n            .collect(Collectors.toList());\n        System.out.println(\"Squared: \" + squared);\n\n        // Stream from array\n        int[] arr = {5, 3, 8, 1, 9, 2};\n        int sum = Arrays.stream(arr).sum();\n        System.out.println(\"Array sum: \" + sum);\n\n        // Streams are single-use!\n        Stream<Integer> stream = nums.stream().filter(n -> n > 5);\n        System.out.println(\"Count > 5: \" + stream.count());\n        // stream.count() again would throw IllegalStateException\n    }\n}",
+"output": "Even numbers: 2 4 6 8 10\nSquared: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]\nArray sum: 28\nCount > 5: 5",
+"points": [
+"Streams don't store data — they process elements from a source on demand (lazy).",
+"A stream can only be consumed once; reuse the source to create a new one.",
+"Pipeline: <em>source → intermediate operations → terminal operation</em>.",
+"<code>Arrays.stream(arr)</code> works for both object and primitive arrays."
+]
+},
+{
+"id": 47,
+"title": "Stream Operations",
+"desc": "Use a stream pipeline to process a list of employee names and salaries: filter by salary, sort, map to uppercase, limit results, and collect.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class StreamOperationsTask {\n\n    record Employee(String name, double salary) {}\n\n    public static void main(String[] args) {\n        List<Employee> employees = List.of(\n            new Employee(\"Alice\",  85_000),\n            new Employee(\"Bob\",    42_000),\n            new Employee(\"Carol\",  95_000),\n            new Employee(\"Dave\",   67_000),\n            new Employee(\"Eve\",   110_000),\n            new Employee(\"Frank\",  38_000)\n        );\n\n        // Full pipeline: filter → sort → map → limit → collect\n        List<String> result = employees.stream()\n            .filter(e -> e.salary() > 60_000)           // keep high earners\n            .sorted(Comparator.comparingDouble(Employee::salary).reversed()) // highest first\n            .map(e -> e.name().toUpperCase())            // extract & format name\n            .limit(3)                                    // top 3\n            .collect(Collectors.toList());\n\n        System.out.println(\"Top 3 high earners: \" + result);\n\n        // Count, min, max using streams\n        OptionalDouble avg = employees.stream()\n            .mapToDouble(Employee::salary)\n            .average();\n        System.out.printf(\"Avg salary: $%.0f%n\", avg.orElse(0));\n\n        double maxSalary = employees.stream()\n            .mapToDouble(Employee::salary)\n            .max()\n            .orElse(0);\n        System.out.printf(\"Max salary: $%.0f%n\", maxSalary);\n    }\n}",
+"output": "Top 3 high earners: [EVE, CAROL, ALICE]\nAvg salary: $72833\nMax salary: $110000",
+"points": [
+"Each intermediate operation returns a new stream — operations chain fluently.",
+"<code>mapToDouble()</code> produces a <code>DoubleStream</code> with numeric helpers like <code>.sum()</code>, <code>.average()</code>.",
+"<code>Comparator.comparingDouble(...).reversed()</code> is the clean way to sort by a property descending."
+]
+},
+{
+"id": 48,
+"title": "Intermediate Operations",
+"desc": "Demonstrate all key intermediate operations: <code>filter</code>, <code>map</code>, <code>flatMap</code>, <code>distinct</code>, <code>sorted</code>, <code>peek</code>, <code>limit</code>, and <code>skip</code>.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class IntermediateOperationsTask {\n    public static void main(String[] args) {\n        List<Integer> nums = Arrays.asList(5, 3, 8, 1, 9, 2, 3, 7, 5, 1);\n\n        // filter — keep elements matching predicate\n        System.out.print(\"filter > 4: \");\n        nums.stream().filter(n -> n > 4).forEach(n -> System.out.print(n + \" \"));\n        System.out.println();\n\n        // map — transform each element\n        System.out.print(\"map *2    : \");\n        nums.stream().map(n -> n * 2).forEach(n -> System.out.print(n + \" \"));\n        System.out.println();\n\n        // distinct — remove duplicates\n        System.out.print(\"distinct  : \");\n        nums.stream().distinct().forEach(n -> System.out.print(n + \" \"));\n        System.out.println();\n\n        // sorted — natural order\n        System.out.print(\"sorted    : \");\n        nums.stream().distinct().sorted().forEach(n -> System.out.print(n + \" \"));\n        System.out.println();\n\n        // limit + skip — pagination\n        List<Integer> page2 = nums.stream().distinct().sorted()\n            .skip(3).limit(3).collect(Collectors.toList());\n        System.out.println(\"skip3,lim3: \" + page2);\n\n        // flatMap — flatten nested collections\n        List<List<Integer>> nested = List.of(List.of(1, 2), List.of(3, 4), List.of(5));\n        List<Integer> flat = nested.stream()\n            .flatMap(List::stream)\n            .collect(Collectors.toList());\n        System.out.println(\"flatMap   : \" + flat);\n\n        // peek — inspect without consuming (useful for debugging)\n        long count = nums.stream()\n            .filter(n -> n > 3)\n            .peek(n -> System.out.print(\"peek:\" + n + \" \"))\n            .count();\n        System.out.println(\"\ncount > 3 : \" + count);\n    }\n}",
+"output": "filter > 4: 5 8 9 7 5\nmap *2    : 10 6 16 2 18 4 6 14 10 2\ndistinct  : 5 3 8 1 9 2 7\nsorted    : 1 2 3 5 7 8 9\nskip3,lim3: [5, 7, 8]\nflatMap   : [1, 2, 3, 4, 5]\npeek:5 peek:8 peek:9 peek:7 peek:5\ncount > 3 : 5",
+"points": [
+"Intermediate operations are <em>lazy</em> — they only run when a terminal operation is called.",
+"<code>flatMap</code> is essential for working with nested collections or optional values.",
+"<code>peek</code> is for debugging — it lets you observe elements mid-pipeline without consuming them."
+]
+},
+{
+"id": 49,
+"title": "Terminal Operations",
+"desc": "Demonstrate all key terminal operations: <code>forEach</code>, <code>count</code>, <code>sum</code>, <code>min</code>, <code>max</code>, <code>findFirst</code>, <code>anyMatch</code>, <code>allMatch</code>, <code>noneMatch</code>, and <code>reduce</code>.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class TerminalOperationsTask {\n    public static void main(String[] args) {\n        List<Integer> nums = Arrays.asList(4, 7, 2, 9, 1, 5, 8, 3, 6);\n\n        System.out.println(\"count      : \" + nums.stream().count());\n        System.out.println(\"sum        : \" + nums.stream().mapToInt(Integer::intValue).sum());\n        System.out.println(\"min        : \" + nums.stream().mapToInt(Integer::intValue).min().getAsInt());\n        System.out.println(\"max        : \" + nums.stream().mapToInt(Integer::intValue).max().getAsInt());\n        System.out.printf (\"average    : %.2f%n\", nums.stream().mapToInt(Integer::intValue).average().getAsDouble());\n\n        System.out.println(\"anyMatch>8 : \" + nums.stream().anyMatch(n -> n > 8));\n        System.out.println(\"allMatch>0 : \" + nums.stream().allMatch(n -> n > 0));\n        System.out.println(\"noneMatch<0: \" + nums.stream().noneMatch(n -> n < 0));\n\n        Optional<Integer> first = nums.stream().filter(n -> n > 5).findFirst();\n        System.out.println(\"findFirst>5: \" + first.orElse(-1));\n\n        // reduce — combine all elements into one value\n        int product = nums.stream().reduce(1, (a, b) -> a * b);\n        System.out.println(\"reduce (*) : \" + product);\n\n        String joined = List.of(\"Java\",\"is\",\"great\").stream()\n            .reduce(\"\", (a, b) -> a.isEmpty() ? b : a + \" \" + b);\n        System.out.println(\"reduce (+) : \" + joined);\n    }\n}",
+"output": "count      : 9\nsum        : 45\nmin        : 1\nmax        : 9\naverage    : 5.00\nanyMatch>8 : true\nallMatch>0 : true\nnoneMatch<0: true\nfindFirst>5: 7\nreduce (*) : 362880\nreduce (+) : Java is great",
+"points": [
+"Terminal operations trigger the entire pipeline — without them, nothing runs.",
+"<code>reduce(identity, accumulator)</code> folds all elements into a single result.",
+"<code>Optional</code> return values from <code>findFirst</code>, <code>min</code>, etc. avoid NPE — always check with <code>.isPresent()</code> or <code>.orElse()</code>."
+]
+},
+{
+"id": 50,
+"title": "Collectors",
+"desc": "Use <code>Collectors</code> to collect stream results into lists, maps, sets, and perform grouping, partitioning, joining, and statistical summaries.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class CollectorsTask {\n\n    record Person(String name, String city, int age) {}\n\n    public static void main(String[] args) {\n        List<Person> people = List.of(\n            new Person(\"Alice\", \"Munich\",  30),\n            new Person(\"Bob\",   \"Berlin\",  25),\n            new Person(\"Carol\", \"Munich\",  35),\n            new Person(\"Dave\",  \"Berlin\",  28),\n            new Person(\"Eve\",   \"Hamburg\", 22)\n        );\n\n        // toList / toSet\n        List<String> names = people.stream().map(Person::name).collect(Collectors.toList());\n        System.out.println(\"Names: \" + names);\n\n        // joining\n        String joined = people.stream().map(Person::name).collect(Collectors.joining(\", \", \"[\", \"]\"));\n        System.out.println(\"Joined: \" + joined);\n\n        // groupingBy\n        Map<String, List<Person>> byCity = people.stream().collect(Collectors.groupingBy(Person::city));\n        byCity.forEach((city, ps) ->\n            System.out.println(city + \": \" + ps.stream().map(Person::name).collect(Collectors.joining(\", \"))));\n\n        // counting per group\n        Map<String, Long> countByCity = people.stream().collect(Collectors.groupingBy(Person::city, Collectors.counting()));\n        System.out.println(\"Count: \" + countByCity);\n\n        // partitioningBy\n        Map<Boolean, List<String>> byAdult = people.stream()\n            .collect(Collectors.partitioningBy(p -> p.age() >= 30, Collectors.mapping(Person::name, Collectors.toList())));\n        System.out.println(\">=30 : \" + byAdult.get(true));\n        System.out.println(\"< 30 : \" + byAdult.get(false));\n\n        // summarizingInt\n        IntSummaryStatistics stats = people.stream().collect(Collectors.summarizingInt(Person::age));\n        System.out.printf(\"Age stats: min=%d max=%d avg=%.1f%n\", stats.getMin(), stats.getMax(), stats.getAverage());\n    }\n}",
+"output": "Names: [Alice, Bob, Carol, Dave, Eve]\nJoined: [Alice, Bob, Carol, Dave, Eve]\nMunich: Alice, Carol\nBerlin: Bob, Dave\nHamburg: Eve\nCount: {Munich=2, Berlin=2, Hamburg=1}\n>=30 : [Alice, Carol]\n< 30 : [Bob, Dave, Eve]\nAge stats: min=22 max=35 avg=28.0",
+"points": [
+"<code>Collectors.toList()</code>, <code>toSet()</code>, <code>toMap()</code> for standard collections.",
+"<code>groupingBy()</code> creates a <code>Map&lt;Key, List&lt;T&gt;&gt;</code> — very powerful for analytics.",
+"<code>partitioningBy()</code> is a special case of grouping that always creates exactly two groups.",
+"<code>joining(delimiter, prefix, suffix)</code> is the cleanest way to build comma-separated strings."
+]
+},
+{
+"id": 51,
+"title": "Parallel Streams",
+"desc": "Use <code>parallelStream()</code> to speed up a large computation. Compare parallel vs sequential performance and understand ordering behaviour.",
+"code": "import java.util.*;\nimport java.util.stream.*;\n\npublic class ParallelStreamsTask {\n    public static void main(String[] args) {\n        List<Integer> bigList = IntStream.rangeClosed(1, 1_000_000)\n            .boxed().collect(Collectors.toList());\n\n        // Sequential\n        long t1 = System.currentTimeMillis();\n        long seqSum = bigList.stream()\n            .mapToLong(Integer::longValue).sum();\n        long seqTime = System.currentTimeMillis() - t1;\n\n        // Parallel\n        long t2 = System.currentTimeMillis();\n        long parSum = bigList.parallelStream()\n            .mapToLong(Integer::longValue).sum();\n        long parTime = System.currentTimeMillis() - t2;\n\n        System.out.println(\"Sequential sum : \" + seqSum + \" (\" + seqTime + \"ms)\");\n        System.out.println(\"Parallel sum   : \" + parSum + \" (\" + parTime + \"ms)\");\n\n        // Ordering: sequential preserves order, parallel may not\n        System.out.print(\"Sequential: \");\n        IntStream.range(0, 5).forEach(i -> System.out.print(i + \" \"));\n        System.out.println();\n\n        System.out.print(\"Parallel  : \");\n        IntStream.range(0, 5).parallel().forEach(i -> System.out.print(i + \" \"));\n        System.out.println(\"(order may vary)\");\n\n        // forEachOrdered restores order in parallel\n        System.out.print(\"Ordered   : \");\n        IntStream.range(0, 5).parallel().forEachOrdered(i -> System.out.print(i + \" \"));\n        System.out.println();\n    }\n}",
+"output": "Sequential sum : 500000500000 (15ms)\nParallel sum   : 500000500000 (8ms)\nSequential: 0 1 2 3 4\nParallel  : 3 1 4 0 2 (order may vary)\nOrdered   : 0 1 2 3 4",
+"points": [
+"<code>.parallelStream()</code> uses the common ForkJoinPool — great for CPU-intensive operations.",
+"Parallel streams give no benefit (and may hurt) for small lists or I/O-bound work.",
+"Parallel <code>forEach</code> is unordered; use <code>forEachOrdered</code> when order matters.",
+"Never use parallel streams with stateful lambdas or shared mutable state."
+]
+},
+{
+"id": 52,
+"title": "Optional Class",
+"desc": "Use <code>Optional</code> to safely handle potentially null values. Demonstrate creation, checking, mapping, filtering, and chaining with <code>orElse</code>, <code>map</code>, and <code>ifPresent</code>.",
+"code": "import java.util.*;\n\npublic class OptionalClassTask {\n\n    static Optional<String> findUser(int id) {\n        Map<Integer, String> db = Map.of(1, \"Alice\", 2, \"Bob\", 3, \"Carol\");\n        return Optional.ofNullable(db.get(id));\n    }\n\n    static Optional<String> getEmail(String name) {\n        Map<String, String> emails = Map.of(\"Alice\", \"alice@example.com\");\n        return Optional.ofNullable(emails.get(name));\n    }\n\n    public static void main(String[] args) {\n        // Creating Optional\n        Optional<String> present = Optional.of(\"Hello\");\n        Optional<String> empty   = Optional.empty();\n        Optional<String> nullable = Optional.ofNullable(null);\n\n        System.out.println(\"present.isPresent(): \" + present.isPresent());\n        System.out.println(\"empty.isEmpty()     : \" + empty.isEmpty());     // Java 11+\n\n        // get / orElse / orElseGet / orElseThrow\n        System.out.println(\"present.get()       : \" + present.get());\n        System.out.println(\"empty.orElse(\"??\")   : \" + empty.orElse(\"??\"));\n        System.out.println(\"orElseGet           : \" + empty.orElseGet(() -> \"computed\"));\n\n        // ifPresent\n        present.ifPresent(v -> System.out.println(\"ifPresent: \" + v));\n\n        // map and filter\n        Optional<Integer> length = present.map(String::length);\n        System.out.println(\"map to length       : \" + length.orElse(0));\n\n        Optional<String> upper = present.filter(s -> s.length() > 3).map(String::toUpperCase);\n        System.out.println(\"filter+map          : \" + upper.orElse(\"short\"));\n\n        // Chaining Optionals with flatMap\n        Optional<String> email = findUser(1).flatMap(OptionalClassTask::getEmail);\n        System.out.println(\"\\nUser 1 email: \" + email.orElse(\"not found\"));\n        Optional<String> email2 = findUser(2).flatMap(OptionalClassTask::getEmail);\n        System.out.println(\"User 2 email: \" + email2.orElse(\"not found\"));\n    }\n}",
+"output": "present.isPresent(): true\nempty.isEmpty()     : true\npresent.get()       : Hello\nempty.orElse(\"??\")   : ??\norElseGet           : computed\nifPresent: Hello\nmap to length       : 5\nfilter+map          : HELLO\n\nUser 1 email: alice@example.com\nUser 2 email: not found",
+"points": [
+"<code>Optional</code> is a container that may or may not hold a value — a safer alternative to returning <code>null</code>.",
+"Never call <code>.get()</code> without checking <code>.isPresent()</code> first.",
+"<code>flatMap</code> is used to chain methods that themselves return <code>Optional</code>.",
+"Use <code>Optional</code> as a return type, not as a field or method parameter."
+]
+}
+];
+
+// ── Build TOC ──
+const tocEl = document.getElementById('toc');
+DATA.forEach(t => {
+  const a = document.createElement('a');
+  a.href = '#task-' + t.id;
+  a.innerHTML = '<span class="toc-num">' + String(t.id).padStart(2,'0') + '</span>' + t.title;
+  tocEl.appendChild(a);
+});
+
+// ── Sections ──
+const SECTIONS = [{"start": 1, "end": 8, "label": "Variables, Types &amp; Basics"}, {"start": 9, "end": 16, "label": "Control Flow"}, {"start": 17, "end": 24, "label": "Strings &amp; Regular Expressions"}, {"start": 25, "end": 29, "label": "Arrays"}, {"start": 30, "end": 36, "label": "Methods"}, {"start": 37, "end": 43, "label": "Generics"}, {"start": 44, "end": 52, "label": "Lambda &amp; Streams"}];
+
+const container = document.getElementById('tasks');
+SECTIONS.forEach(sec => {
+  const div = document.createElement('div');
+  div.className = 'section-divider';
+  div.innerHTML = '<div class="section-divider-line"></div><div class="section-divider-label">'
+    + sec.label + '</div><div class="section-divider-line"></div>';
+  container.appendChild(div);
+  for (let i = sec.start; i <= sec.end; i++) {
+    const t = DATA.find(d => d.id === i);
+    if (t) container.appendChild(buildCard(t));
+  }
+});
+
+function buildCard(t) {
+  const card = document.createElement('div');
+  card.className = 'task-card';
+  card.id = 'task-' + t.id;
+
+  const badHtml = t.badCode
+    ? '<div class="bad-code"><div class="bad-code-label">&#9888; Bad Code (to rewrite)</div><pre>'
+      + t.badCode.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      + '</pre></div>' : '';
+
+  let tableHtml = '';
+  if (t.table) {
+    const ths = t.table.headers.map(h => '<th>'+h+'</th>').join('');
+    const trs = t.table.rows.map(r => '<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+    tableHtml = '<div style="padding:14px 20px 4px"><table class="kp-table"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table></div>';
+  }
+
+  const ptsHtml = (t.points && t.points.length)
+    ? '<div class="key-points"><div class="key-points-title">Key Points</div>'
+      + t.points.map(p => '<div class="key-point">'+p+'</div>').join('')
+      + '</div>' : '';
+
+  const outHtml = t.output
+    ? '<div class="output-block"><div class="output-label">// output</div><pre>'
+      + t.output.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      + '</pre></div>' : '';
+
+  // Build the skeleton WITHOUT the highlighted code — use a placeholder
+  card.innerHTML =
+    '<div class="task-header">'
+    + '<div class="task-number">#' + String(t.id).padStart(2,'0') + '</div>'
+    + '<div class="task-content">'
+    + '<div class="task-title">' + t.title + '</div>'
+    + '<div class="task-desc">' + t.desc + '</div>'
+    + '</div></div>'
+    + badHtml
+    + '<div class="solution-toggle" onclick="toggleCard(this)">'
+    + '<div class="solution-toggle-left">'
+    + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>'
+    + 'Solution</div>'
+    + '<svg class="toggle-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
+    + '</div>'
+    + '<div class="solution-body">'
+    + '<div class="code-wrap">'
+    + '<div class="code-lang"><span class="lang-dot"></span>java'
+    + '<button class="copy-btn" onclick="copyCode(this)">copy</button></div>'
+    + '<pre class="code-block"></pre>'
+    + '</div>'
+    + outHtml + tableHtml + ptsHtml
+    + '</div>';
+
+  // Inject highlighted code SEPARATELY so span tags are parsed as real HTML
+  card.querySelector('pre.code-block').innerHTML = highlight(t.code);
+  return card;
+}
+
+function toggleCard(btn) { btn.closest('.task-card').classList.toggle('open'); }
+
+function copyCode(btn) {
+  const text = btn.closest('.code-wrap').querySelector('pre').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'copied!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
