@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java OOP & SOLID Tasks</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14; --surface:#13161e; --surface2:#1a1e2a; --border:#252a38;
+    --accent:#f0c040; --accent2:#4ec9b0; --accent3:#ce9178;
+    --text:#d4d8e8; --text-dim:#6b7394; --text-bright:#eef0f8;
+    --kw:#569cd6; --str:#ce9178; --cmt:#6a9955; --typ:#4ec9b0;
+    --num:#b5cea8; --mth:#dcdcaa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7}
+  header{background:linear-gradient(135deg,#0d0f14 0%,#131827 100%);border-bottom:1px solid var(--border);padding:48px 40px 36px;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.12) 0%,transparent 70%);pointer-events:none}
+  .header-inner{max-width:900px;margin:0 auto;position:relative}
+  .header-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;opacity:.8}
+  h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,4vw,46px);color:var(--text-bright);line-height:1.1;margin-bottom:14px}
+  h1 span{color:var(--accent)}
+  .header-meta{font-size:14px;color:var(--text-dim);display:flex;gap:24px;flex-wrap:wrap;align-items:center;margin-top:20px}
+  .meta-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--text-dim)}
+  .container{max-width:900px;margin:0 auto;padding:40px 40px 80px}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:48px}
+  .toc-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:20px}
+  .toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 24px}
+  .toc-grid a{color:var(--text-dim);text-decoration:none;font-size:13px;font-family:'JetBrains Mono',monospace;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px}
+  .toc-grid a:hover{color:var(--accent);border-color:var(--accent)}
+  .toc-num{color:var(--accent);opacity:.5;min-width:22px;font-size:11px}
+  .section-divider{display:flex;align-items:center;gap:16px;margin:56px 0 28px}
+  .section-divider-line{flex:1;height:1px;background:var(--border)}
+  .section-divider-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px}
+  .task-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+  .task-card:hover{border-color:#2e3448}
+  .task-header{padding:20px 24px;display:flex;align-items:flex-start;gap:16px}
+  .task-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(240,192,64,.1);border:1px solid rgba(240,192,64,.2);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+  .task-content{flex:1}
+  .task-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:8px;line-height:1.3}
+  .task-desc{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .task-desc code,.key-point code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent3);background:rgba(206,145,120,.08);padding:1px 5px;border-radius:3px}
+  .bad-code{margin:0 24px 12px;background:rgba(255,80,80,.04);border:1px solid rgba(255,80,80,.15);border-radius:8px;overflow:hidden}
+  .bad-code-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#ff6b6b;padding:6px 14px;background:rgba(255,80,80,.07);border-bottom:1px solid rgba(255,80,80,.1)}
+  .bad-code pre{padding:14px 16px;font-size:12px;color:var(--text-dim);overflow-x:auto;font-family:'JetBrains Mono',monospace}
+  .solution-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;cursor:pointer;background:var(--surface2);border-top:1px solid var(--border);user-select:none;transition:background .15s;gap:12px}
+  .solution-toggle:hover{background:#1e2332}
+  .solution-toggle-left{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.5px}
+  .toggle-arrow{margin-left:auto;color:var(--text-dim);transition:transform .25s ease;flex-shrink:0}
+  .task-card.open .toggle-arrow{transform:rotate(180deg)}
+  .task-card.open .solution-toggle{background:rgba(78,201,176,.06)}
+  .solution-body{display:none;border-top:1px solid var(--border)}
+  .task-card.open .solution-body{display:block}
+  .code-wrap{position:relative}
+  .code-lang{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);padding:10px 16px 4px;background:#0f1118;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2030}
+  .lang-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .copy-btn{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+  .copy-btn:hover,.copy-btn.copied{color:var(--accent2);border-color:var(--accent2)}
+  pre.code-block{background:#0f1118;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;color:var(--text);tab-size:4;margin:0}
+  .kw{color:var(--kw)}.str{color:var(--str)}.cmt{color:var(--cmt);font-style:italic}.typ{color:var(--typ)}.num{color:var(--num)}.mth{color:var(--mth)}
+  .output-block{background:#090b10;border-top:1px solid #1a1d28;padding:16px 20px}
+  .output-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+  .output-block pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:#88c0d0;line-height:1.6;white-space:pre-wrap}
+  .key-points{padding:18px 24px;background:rgba(240,192,64,.03);border-top:1px solid rgba(240,192,64,.1)}
+  .key-points-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);opacity:.7;margin-bottom:10px}
+  .key-point{display:flex;gap:10px;font-size:13px;color:var(--text-dim);padding:3px 0;line-height:1.55}
+  .key-point::before{content:'→';color:var(--accent);opacity:.5;flex-shrink:0;margin-top:1px}
+  .kp-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  .kp-table th{text-align:left;padding:7px 12px;background:#1a1e2a;color:var(--text-dim);font-weight:500;border:1px solid var(--border)}
+  .kp-table td{padding:6px 12px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text)}
+  @media(max-width:640px){header{padding:32px 20px 24px}.container{padding:28px 16px 60px}.toc{padding:20px}.task-header{padding:16px 18px}.solution-toggle{padding:12px 18px}}
+  ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2e3448;border-radius:3px}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="header-label">// study guide</div>
+    <h1>Java <span>OOP</span> &amp; <span>SOLID</span></h1>
+    <div class="header-meta">
+      <span class="meta-pill">30 Topics</span>
+      <span class="meta-pill">30 Tasks</span>
+      <span class="meta-pill">OOP &rarr; SOLID</span>
+      <span style="font-size:13px;color:var(--text-dim)">Click <strong style="color:var(--accent2)">&#9658; Solution</strong> to reveal each answer</span>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="toc"><div class="toc-title">Table of Contents</div><div class="toc-grid" id="toc"></div></div>
+  <div id="tasks"></div>
+</div>
+
+<script>
+// ── Safe highlighter: works on plain text, outputs HTML ──
+function highlight(raw) {
+  let s = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  const strTokens = [];
+  s = s.replace(/"([^"\\]|\\.)*"/g, m => {
+    const idx = strTokens.length;
+    strTokens.push('<span class="str">' + m + '</span>');
+    return '\x00STR' + idx + '\x00';
+  });
+  s = s.replace(/'[^'\\]'/g, m => {
+    const idx = strTokens.length;
+    strTokens.push('<span class="str">' + m + '</span>');
+    return '\x00STR' + idx + '\x00';
+  });
+
+  const cmtTokens = [];
+  s = s.replace(/\/\*[\s\S]*?\*\//g, m => {
+    const idx = cmtTokens.length;
+    cmtTokens.push('<span class="cmt">' + m + '</span>');
+    return '\x00CMT' + idx + '\x00';
+  });
+  s = s.replace(/\/\/[^\n]*/g, m => {
+    const idx = cmtTokens.length;
+    cmtTokens.push('<span class="cmt">' + m + '</span>');
+    return '\x00CMT' + idx + '\x00';
+  });
+
+  const kws = ['public','private','protected','static','void','class','record',
+    'return','new','if','else','for','while','do','switch','case','break',
+    'continue','int','double','float','long','short','byte','char','boolean',
+    'import','package','final','abstract','interface','extends','implements',
+    'try','catch','throws','throw','default','this','super','null','true',
+    'false','instanceof','var','sealed','permits','yield','enum','@Override'];
+  s = s.replace(new RegExp('(?<![\\w])(' + kws.join('|').replace('@','\\@') + ')(?![\\w])', 'g'),
+    '\x00KW$1\x00');
+  s = s.replace(/\x00KW(.+?)\x00/g, '<span class="kw">$1</span>');
+
+  const types = ['String','Integer','Double','Boolean','Long','Float','Character',
+    'Byte','Short','Object','System','Math','Scanner','StringBuilder','StringBuffer',
+    'Arrays','List','ArrayList','Map','HashMap','Set','HashSet','Optional',
+    'Stream','Collectors','Pattern','Matcher','Thread','Runnable','Comparable',
+    'Iterable','Collections','Consumer','Function','Predicate','Supplier',
+    'BiFunction','UnaryOperator','BinaryOperator','Comparator','Iterator'];
+  s = s.replace(new RegExp('(?<![\\w])(' + types.join('|') + ')(?![\\w])', 'g'),
+    '\x00TYP$1\x00');
+  s = s.replace(/\x00TYP(\w+)\x00/g, '<span class="typ">$1</span>');
+
+  s = s.replace(/(?<!\w)(\d+\.?\d*[fFLlDd]?)(?!\w)/g, '<span class="num">$1</span>');
+  s = s.replace(/\b([a-z][a-zA-Z0-9_]*)(?=\s*\()/g, '<span class="mth">$1</span>');
+
+  cmtTokens.forEach((val, i) => { s = s.replace('\x00CMT' + i + '\x00', val); });
+  strTokens.forEach((val, i)  => { s = s.replace('\x00STR'  + i + '\x00', val); });
+
+  return s;
+}
+
+// ── Data ──
+const DATA = [
+// ═══════════════════════════════════════════
+// SECTION: OOP FUNDAMENTALS (1–20)
+// ═══════════════════════════════════════════
+{
+"id": 1,
+"section": "OOP Fundamentals",
+"title": "Classes & Objects",
+"desc": "Create a <code>Car</code> class with fields for brand, model, and year. Add a constructor and a method that prints car info. Instantiate two different cars.",
+"code": "public class Car {\n    String brand;\n    String model;\n    int year;\n\n    Car(String brand, String model, int year) {\n        this.brand = brand;\n        this.model = model;\n        this.year = year;\n    }\n\n    void displayInfo() {\n        System.out.println(year + \" \" + brand + \" \" + model);\n    }\n\n    public static void main(String[] args) {\n        Car car1 = new Car(\"Toyota\", \"Camry\", 2022);\n        Car car2 = new Car(\"Honda\", \"Civic\", 2023);\n\n        car1.displayInfo();\n        car2.displayInfo();\n\n        System.out.println(\"Same object? \" + (car1 == car2)); // false\n    }\n}",
+"output": "2022 Toyota Camry\n2023 Honda Civic\nSame object? false",
+"points": [
+"A class is a blueprint; an object is an instance created with <code>new</code>.",
+"<code>this</code> refers to the current object — resolves name conflicts between parameters and fields.",
+"Each object has its own copy of instance fields stored on the heap."
+]
+},
+{
+"id": 2,
+"title": "Encapsulation",
+"desc": "Refactor a <code>BankAccount</code> class so that the balance is private and can only be modified through <code>deposit()</code> and <code>withdraw()</code> methods with validation.",
+"badCode": "public class BankAccount {\n    public double balance = 0; // anyone can set to -9999!\n}",
+"code": "public class BankAccount {\n    private double balance;\n    private final String owner;\n\n    public BankAccount(String owner, double initialDeposit) {\n        this.owner = owner;\n        this.balance = Math.max(0, initialDeposit);\n    }\n\n    public double getBalance() { return balance; }\n    public String getOwner()   { return owner; }\n\n    public void deposit(double amount) {\n        if (amount <= 0) throw new IllegalArgumentException(\"Deposit must be positive\");\n        balance += amount;\n        System.out.printf(\"Deposited $%.2f. Balance: $%.2f%n\", amount, balance);\n    }\n\n    public boolean withdraw(double amount) {\n        if (amount <= 0 || amount > balance) {\n            System.out.println(\"Withdrawal denied.\");\n            return false;\n        }\n        balance -= amount;\n        System.out.printf(\"Withdrew $%.2f. Balance: $%.2f%n\", amount, balance);\n        return true;\n    }\n\n    public static void main(String[] args) {\n        BankAccount acc = new BankAccount(\"Alice\", 1000);\n        acc.deposit(500);\n        acc.withdraw(200);\n        acc.withdraw(5000); // denied\n        System.out.println(\"Final: $\" + acc.getBalance());\n    }\n}",
+"output": "Deposited $500.00. Balance: $1500.00\nWithdrew $200.00. Balance: $1300.00\nWithdrawal denied.\nFinal: $1300.0",
+"points": [
+"Encapsulation = private fields + public getters/setters with validation.",
+"Prevents invalid state — balance can never go negative.",
+"<code>final</code> fields (like owner) make objects partially immutable."
+]
+},
+{
+"id": 3,
+"title": "Constructors & this",
+"desc": "Create a <code>Student</code> class with multiple constructors using constructor chaining (<code>this(...)</code>). Show how one constructor delegates to another.",
+"code": "public class Student {\n    private String name;\n    private int age;\n    private String major;\n\n    // Primary constructor\n    Student(String name, int age, String major) {\n        this.name = name;\n        this.age = age;\n        this.major = major;\n    }\n\n    // Chains to primary — default major\n    Student(String name, int age) {\n        this(name, age, \"Undeclared\");\n    }\n\n    // Chains to 2-arg — default age\n    Student(String name) {\n        this(name, 18);\n    }\n\n    void display() {\n        System.out.printf(\"%s, age %d, major: %s%n\", name, age, major);\n    }\n\n    public static void main(String[] args) {\n        new Student(\"Alice\", 21, \"CS\").display();\n        new Student(\"Bob\", 20).display();\n        new Student(\"Carol\").display();\n    }\n}",
+"output": "Alice, age 21, major: CS\nBob, age 20, major: Undeclared\nCarol, age 18, major: Undeclared",
+"points": [
+"<code>this(...)</code> must be the first statement in a constructor.",
+"Constructor chaining avoids code duplication across overloaded constructors.",
+"Java provides a default no-arg constructor only if you define none."
+]
+},
+{
+"id": 4,
+"title": "Static Members",
+"desc": "Create a <code>Counter</code> class that tracks how many instances have been created using a <code>static</code> field and a <code>static</code> method.",
+"code": "public class Counter {\n    private static int totalInstances = 0;\n    private final int id;\n\n    Counter() {\n        totalInstances++;\n        this.id = totalInstances;\n    }\n\n    int getId() { return id; }\n\n    static int getTotalInstances() {\n        return totalInstances;\n    }\n\n    public static void main(String[] args) {\n        Counter a = new Counter();\n        Counter b = new Counter();\n        Counter c = new Counter();\n\n        System.out.println(\"a.id = \" + a.getId());\n        System.out.println(\"b.id = \" + b.getId());\n        System.out.println(\"c.id = \" + c.getId());\n        System.out.println(\"Total: \" + Counter.getTotalInstances());\n    }\n}",
+"output": "a.id = 1\nb.id = 2\nc.id = 3\nTotal: 3",
+"points": [
+"<code>static</code> fields are shared across all instances — one copy per class.",
+"<code>static</code> methods cannot access <code>this</code> or instance fields.",
+"Access static members via the class name: <code>Counter.getTotalInstances()</code>."
+]
+},
+{
+"id": 5,
+"title": "Inheritance Basics",
+"desc": "Create an <code>Animal</code> base class with a <code>speak()</code> method. Derive <code>Dog</code> and <code>Cat</code> subclasses that override <code>speak()</code>. Demonstrate <code>super</code> usage.",
+"code": "public class Animal {\n    protected String name;\n\n    Animal(String name) {\n        this.name = name;\n        System.out.println(\"Animal constructor: \" + name);\n    }\n\n    void speak() {\n        System.out.println(name + \" makes a sound.\");\n    }\n\n    void info() {\n        System.out.println(\"I am \" + name + \" (\" + getClass().getSimpleName() + \")\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name); // must call parent constructor first\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \" says: Woof!\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \" says: Meow!\");\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Animal dog = new Dog(\"Rex\");\n        Animal cat = new Cat(\"Whiskers\");\n\n        dog.speak();\n        cat.speak();\n        dog.info();\n        cat.info();\n    }\n}",
+"output": "Animal constructor: Rex\nAnimal constructor: Whiskers\nRex says: Woof!\nWhiskers says: Meow!\nI am Rex (Dog)\nI am Whiskers (Cat)",
+"points": [
+"<code>extends</code> creates an is-a relationship: every Dog is an Animal.",
+"<code>super()</code> calls the parent constructor — must be the first statement.",
+"<code>@Override</code> ensures you're actually overriding, not accidentally overloading."
+]
+},
+{
+"id": 6,
+"title": "Polymorphism",
+"desc": "Store different shape objects in an <code>Shape[]</code> array and call <code>area()</code> on each — the correct override runs automatically at runtime.",
+"code": "abstract class Shape {\n    abstract double area();\n    abstract String name();\n\n    void printArea() {\n        System.out.printf(\"%s: area = %.2f%n\", name(), area());\n    }\n}\n\nclass Circle extends Shape {\n    private double radius;\n    Circle(double radius) { this.radius = radius; }\n\n    @Override double area() { return Math.PI * radius * radius; }\n    @Override String name() { return \"Circle(r=\" + radius + \")\"; }\n}\n\nclass Rectangle extends Shape {\n    private double w, h;\n    Rectangle(double w, double h) { this.w = w; this.h = h; }\n\n    @Override double area() { return w * h; }\n    @Override String name() { return \"Rect(\" + w + \"x\" + h + \")\"; }\n}\n\nclass Triangle extends Shape {\n    private double base, height;\n    Triangle(double base, double height) { this.base = base; this.height = height; }\n\n    @Override double area() { return 0.5 * base * height; }\n    @Override String name() { return \"Tri(b=\" + base + \",h=\" + height + \")\"; }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Shape[] shapes = {\n            new Circle(5),\n            new Rectangle(4, 6),\n            new Triangle(3, 8),\n            new Circle(2.5)\n        };\n\n        for (Shape s : shapes) {\n            s.printArea(); // polymorphic dispatch\n        }\n    }\n}",
+"output": "Circle(r=5.0): area = 78.54\nRect(4.0x6.0): area = 24.00\nTri(b=3.0,h=8.0): area = 12.00\nCircle(r=2.5): area = 19.63",
+"points": [
+"Polymorphism = one variable type (<code>Shape</code>), many runtime behaviors.",
+"The JVM decides which <code>area()</code> to call at runtime (dynamic dispatch).",
+"<code>abstract</code> methods force subclasses to provide implementations."
+]
+},
+{
+"id": 7,
+"title": "Abstract Classes",
+"desc": "Create an abstract <code>Employee</code> class with a concrete method and an abstract <code>calculatePay()</code> method. Implement two different employee types.",
+"code": "abstract class Employee {\n    protected String name;\n    protected int id;\n\n    Employee(String name, int id) {\n        this.name = name;\n        this.id = id;\n    }\n\n    abstract double calculatePay();\n\n    // Concrete method shared by all employees\n    void printPaySlip() {\n        System.out.printf(\"[%d] %s — Pay: $%.2f%n\", id, name, calculatePay());\n    }\n}\n\nclass SalariedEmployee extends Employee {\n    private double annualSalary;\n\n    SalariedEmployee(String name, int id, double annualSalary) {\n        super(name, id);\n        this.annualSalary = annualSalary;\n    }\n\n    @Override\n    double calculatePay() {\n        return annualSalary / 12; // monthly\n    }\n}\n\nclass HourlyEmployee extends Employee {\n    private double hourlyRate;\n    private int hoursWorked;\n\n    HourlyEmployee(String name, int id, double hourlyRate, int hoursWorked) {\n        super(name, id);\n        this.hourlyRate = hourlyRate;\n        this.hoursWorked = hoursWorked;\n    }\n\n    @Override\n    double calculatePay() {\n        int overtime = Math.max(0, hoursWorked - 160);\n        int regular = hoursWorked - overtime;\n        return regular * hourlyRate + overtime * hourlyRate * 1.5;\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Employee[] staff = {\n            new SalariedEmployee(\"Alice\", 101, 96000),\n            new HourlyEmployee(\"Bob\", 102, 25, 180),\n            new HourlyEmployee(\"Carol\", 103, 30, 160)\n        };\n        for (Employee e : staff) e.printPaySlip();\n    }\n}",
+"output": "[101] Alice — Pay: $8000.00\n[102] Bob — Pay: $4750.00\n[103] Carol — Pay: $4800.00",
+"points": [
+"Abstract classes cannot be instantiated — only subclassed.",
+"They can mix abstract methods (no body) with concrete methods (shared logic).",
+"Use abstract classes when subclasses share common state or behavior."
+]
+},
+{
+"id": 8,
+"title": "Interfaces",
+"desc": "Define a <code>Printable</code> and <code>Saveable</code> interface. Create a <code>Document</code> class that implements both, demonstrating multiple interface implementation.",
+"code": "interface Printable {\n    void print();\n    default void preview() {\n        System.out.println(\"[Preview] \" + getClass().getSimpleName());\n    }\n}\n\ninterface Saveable {\n    void save(String path);\n    boolean isSaved();\n}\n\nclass Document implements Printable, Saveable {\n    private String title;\n    private String content;\n    private boolean saved = false;\n\n    Document(String title, String content) {\n        this.title = title;\n        this.content = content;\n    }\n\n    @Override\n    public void print() {\n        System.out.println(\"=== \" + title + \" ===\");\n        System.out.println(content);\n    }\n\n    @Override\n    public void save(String path) {\n        System.out.println(\"Saving '\" + title + \"' to \" + path);\n        saved = true;\n    }\n\n    @Override\n    public boolean isSaved() { return saved; }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Document doc = new Document(\"Report\", \"Q4 results look great.\");\n        doc.preview();             // default method\n        doc.print();\n        System.out.println(\"Saved? \" + doc.isSaved());\n        doc.save(\"/docs/report.pdf\");\n        System.out.println(\"Saved? \" + doc.isSaved());\n    }\n}",
+"output": "[Preview] Document\n=== Report ===\nQ4 results look great.\nSaved? false\nSaving 'Report' to /docs/report.pdf\nSaved? true",
+"points": [
+"Interfaces define a contract — what a class can do, not how.",
+"A class can implement multiple interfaces (unlike single inheritance for classes).",
+"<code>default</code> methods (Java 8+) provide optional implementations."
+]
+},
+{
+"id": 9,
+"title": "Interface vs Abstract Class",
+"desc": "Show when to use an interface vs an abstract class by modeling a <code>Vehicle</code> hierarchy with an <code>Electric</code> capability interface.",
+"code": "// Abstract class: shared state + partial implementation\nabstract class Vehicle {\n    protected String make;\n    protected int year;\n\n    Vehicle(String make, int year) {\n        this.make = make;\n        this.year = year;\n    }\n\n    abstract String fuelType();\n\n    void describe() {\n        System.out.printf(\"%d %s [%s]%n\", year, make, fuelType());\n    }\n}\n\n// Interface: capability that any class can adopt\ninterface Electric {\n    int batteryCapacityKWh();\n    default void chargingInfo() {\n        System.out.println(\"Battery: \" + batteryCapacityKWh() + \" kWh\");\n    }\n}\n\nclass GasCar extends Vehicle {\n    GasCar(String make, int year) { super(make, year); }\n    @Override String fuelType() { return \"Gasoline\"; }\n}\n\nclass ElectricCar extends Vehicle implements Electric {\n    private int battery;\n    ElectricCar(String make, int year, int battery) {\n        super(make, year);\n        this.battery = battery;\n    }\n    @Override String fuelType() { return \"Electric\"; }\n    @Override public int batteryCapacityKWh() { return battery; }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Vehicle gas = new GasCar(\"Toyota Camry\", 2023);\n        ElectricCar ev = new ElectricCar(\"Tesla Model 3\", 2024, 75);\n\n        gas.describe();\n        ev.describe();\n        ev.chargingInfo();\n\n        // Checking capability\n        Vehicle[] fleet = {gas, ev};\n        for (Vehicle v : fleet) {\n            if (v instanceof Electric e) {\n                System.out.println(v.make + \" is electric: \" + e.batteryCapacityKWh() + \" kWh\");\n            }\n        }\n    }\n}",
+"output": "2023 Toyota Camry [Gasoline]\n2024 Tesla Model 3 [Electric]\nBattery: 75 kWh\nTesla Model 3 is electric: 75 kWh",
+"table": {
+"headers": ["Feature", "Abstract Class", "Interface"],
+"rows": [
+["Inheritance", "Single (extends)", "Multiple (implements)"],
+["State (fields)", "Yes (instance fields)", "Only constants (static final)"],
+["Constructors", "Yes", "No"],
+["Use when", "Is-a + shared code", "Can-do / capability"]
+]
+}
+},
+{
+"id": 10,
+"title": "Method Overriding",
+"desc": "Override <code>toString()</code>, <code>equals()</code>, and <code>hashCode()</code> for a <code>Point</code> class. Show why all three should be consistent.",
+"code": "import java.util.Objects;\nimport java.util.HashSet;\n\npublic class Point {\n    private final int x;\n    private final int y;\n\n    Point(int x, int y) { this.x = x; this.y = y; }\n\n    @Override\n    public String toString() {\n        return \"(\" + x + \", \" + y + \")\";\n    }\n\n    @Override\n    public boolean equals(Object o) {\n        if (this == o) return true;\n        if (!(o instanceof Point p)) return false;\n        return x == p.x && y == p.y;\n    }\n\n    @Override\n    public int hashCode() {\n        return Objects.hash(x, y);\n    }\n\n    public static void main(String[] args) {\n        Point a = new Point(3, 4);\n        Point b = new Point(3, 4);\n        Point c = new Point(1, 2);\n\n        System.out.println(\"a = \" + a);\n        System.out.println(\"a.equals(b): \" + a.equals(b));\n        System.out.println(\"a.equals(c): \" + a.equals(c));\n        System.out.println(\"a == b     : \" + (a == b)); // false — different objects\n\n        // HashSet uses hashCode + equals\n        HashSet<Point> set = new HashSet<>();\n        set.add(a);\n        set.add(b); // duplicate — not added\n        set.add(c);\n        System.out.println(\"Set size: \" + set.size()); // 2\n    }\n}",
+"output": "a = (3, 4)\na.equals(b): true\na.equals(c): false\na == b     : false\nSet size: 2",
+"points": [
+"Always override <code>hashCode()</code> when you override <code>equals()</code>.",
+"Contract: equal objects must have the same hash code.",
+"<code>Objects.hash()</code> is a convenient helper for computing hash codes.",
+"<code>instanceof</code> pattern matching (Java 16+) casts and checks in one step."
+]
+},
+{
+"id": 11,
+"title": "Composition over Inheritance",
+"desc": "Refactor an inheritance-based design into composition. A <code>Car</code> HAS-A <code>Engine</code> rather than IS-A <code>Engine</code>.",
+"badCode": "class Engine {\n    void start() { System.out.println(\"Engine started\"); }\n}\nclass Car extends Engine { // Wrong! A Car is NOT an Engine\n    void drive() { start(); System.out.println(\"Driving...\"); }\n}",
+"code": "class Engine {\n    private int horsepower;\n\n    Engine(int hp) { this.horsepower = hp; }\n\n    void start() { System.out.println(\"Engine (\" + horsepower + \"hp) started.\"); }\n    void stop()  { System.out.println(\"Engine stopped.\"); }\n}\n\nclass Car {\n    private String model;\n    private Engine engine; // Composition: Car HAS-A Engine\n\n    Car(String model, Engine engine) {\n        this.model = model;\n        this.engine = engine;\n    }\n\n    void drive() {\n        System.out.println(model + \":\");\n        engine.start();\n        System.out.println(\"  Driving...\");\n    }\n\n    void park() {\n        System.out.println(\"  Parked.\");\n        engine.stop();\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Engine v6 = new Engine(300);\n        Engine electric = new Engine(450);\n\n        Car sedan = new Car(\"Camry\", v6);\n        Car tesla = new Car(\"Model S\", electric);\n\n        sedan.drive();\n        sedan.park();\n        System.out.println();\n        tesla.drive();\n        tesla.park();\n    }\n}",
+"output": "Camry:\nEngine (300hp) started.\n  Driving...\n  Parked.\nEngine stopped.\n\nModel S:\nEngine (450hp) started.\n  Driving...\n  Parked.\nEngine stopped.",
+"points": [
+"Prefer composition (HAS-A) over inheritance (IS-A) for flexibility.",
+"Composition allows swapping components at runtime (e.g., changing the engine).",
+"Inheritance creates tight coupling; composition keeps classes independent."
+]
+},
+{
+"id": 12,
+"title": "Enum Types",
+"desc": "Create an <code>enum</code> for days of the week with fields and methods. Use it in a switch expression.",
+"code": "enum Day {\n    MONDAY(\"Mon\", false),\n    TUESDAY(\"Tue\", false),\n    WEDNESDAY(\"Wed\", false),\n    THURSDAY(\"Thu\", false),\n    FRIDAY(\"Fri\", false),\n    SATURDAY(\"Sat\", true),\n    SUNDAY(\"Sun\", true);\n\n    private final String abbr;\n    private final boolean weekend;\n\n    Day(String abbr, boolean weekend) {\n        this.abbr = abbr;\n        this.weekend = weekend;\n    }\n\n    String abbr() { return abbr; }\n    boolean isWeekend() { return weekend; }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            String type = d.isWeekend() ? \"weekend\" : \"workday\";\n            System.out.printf(\"%s (%s) — %s%n\", d, d.abbr(), type);\n        }\n\n        Day today = Day.WEDNESDAY;\n        String mood = switch (today) {\n            case MONDAY    -> \"Rough start\";\n            case FRIDAY    -> \"Almost there!\";\n            case SATURDAY, SUNDAY -> \"Relaxing\";\n            default        -> \"Keep going\";\n        };\n        System.out.println(\"\\n\" + today + \": \" + mood);\n    }\n}",
+"output": "MONDAY (Mon) — workday\nTUESDAY (Tue) — workday\nWEDNESDAY (Wed) — workday\nTHURSDAY (Thu) — workday\nFRIDAY (Fri) — workday\nSATURDAY (Sat) — weekend\nSUNDAY (Sun) — weekend\n\nWEDNESDAY: Keep going",
+"points": [
+"Enums are full classes — they can have fields, constructors, and methods.",
+"<code>values()</code> returns all enum constants; <code>valueOf(\"MON\")</code> parses a name.",
+"Enums are type-safe — you can't pass an invalid value."
+]
+},
+{
+"id": 13,
+"title": "Records (Java 16+)",
+"desc": "Use Java <code>record</code> to model immutable data. Compare with a manually written class.",
+"code": "// One line replaces ~40 lines of boilerplate\nrecord Point(int x, int y) {\n    // Custom compact constructor for validation\n    Point {\n        if (x < 0 || y < 0) throw new IllegalArgumentException(\"Negative coords\");\n    }\n\n    // Custom method\n    double distanceTo(Point other) {\n        int dx = this.x - other.x;\n        int dy = this.y - other.y;\n        return Math.sqrt(dx * dx + dy * dy);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Point a = new Point(3, 4);\n        Point b = new Point(0, 0);\n        Point c = new Point(3, 4);\n\n        System.out.println(\"a = \" + a);            // auto toString\n        System.out.println(\"a.x() = \" + a.x());    // auto accessor\n        System.out.println(\"a.equals(c): \" + a.equals(c)); // auto equals\n        System.out.println(\"a == c     : \" + (a == c));\n        System.out.printf(\"Distance a→b: %.2f%n\", a.distanceTo(b));\n\n        // Records are immutable — no setters\n        // a.x = 10; // COMPILE ERROR\n    }\n}",
+"output": "a = Point[x=3, y=4]\na.x() = 3\na.equals(c): true\na == c     : false\nDistance a→b: 5.00",
+"points": [
+"Records auto-generate: constructor, getters, <code>toString()</code>, <code>equals()</code>, <code>hashCode()</code>.",
+"Record fields are <code>final</code> — records are immutable by design.",
+"Use compact constructors for validation without repeating field assignments."
+]
+},
+{
+"id": 14,
+"title": "Sealed Classes (Java 17+)",
+"desc": "Use <code>sealed</code> classes to restrict which types can extend a base class. Model a <code>Shape</code> hierarchy with a finite set of subclasses.",
+"code": "sealed interface Shape permits Circle, Rectangle, Triangle {\n    double area();\n}\n\nrecord Circle(double radius) implements Shape {\n    public double area() { return Math.PI * radius * radius; }\n}\n\nrecord Rectangle(double w, double h) implements Shape {\n    public double area() { return w * h; }\n}\n\nfinal class Triangle implements Shape {\n    private final double base, height;\n    Triangle(double base, double height) {\n        this.base = base; this.height = height;\n    }\n    public double area() { return 0.5 * base * height; }\n}\n\nclass Main {\n    static String describe(Shape s) {\n        return switch (s) {\n            case Circle c    -> \"Circle r=\" + c.radius();\n            case Rectangle r -> \"Rect \" + r.w() + \"x\" + r.h();\n            case Triangle t  -> \"Triangle\";\n        }; // no default needed — compiler knows all cases\n    }\n\n    public static void main(String[] args) {\n        Shape[] shapes = { new Circle(5), new Rectangle(3, 4), new Triangle(6, 8) };\n        for (Shape s : shapes)\n            System.out.printf(\"%s → area = %.2f%n\", describe(s), s.area());\n    }\n}",
+"output": "Circle r=5.0 → area = 78.54\nRect 3.0x4.0 → area = 12.00\nTriangle → area = 24.00",
+"points": [
+"<code>sealed</code> restricts which classes can extend/implement a type.",
+"Subclasses must be <code>final</code>, <code>sealed</code>, or <code>non-sealed</code>.",
+"Enables exhaustive <code>switch</code> without a <code>default</code> branch — the compiler verifies all cases."
+]
+},
+{
+"id": 15,
+"title": "instanceof & Pattern Matching",
+"desc": "Use <code>instanceof</code> with pattern matching (Java 16+) to safely cast and process different object types in a clean, readable way.",
+"code": "class Main {\n    sealed interface Notification permits Email, SMS, Push {}\n    record Email(String from, String subject) implements Notification {}\n    record SMS(String phone, String message) implements Notification {}\n    record Push(String app, String title) implements Notification {}\n\n    static void handle(Notification n) {\n        // Pattern matching — no explicit cast needed\n        if (n instanceof Email e) {\n            System.out.println(\"Email from \" + e.from() + \": \" + e.subject());\n        } else if (n instanceof SMS s) {\n            System.out.println(\"SMS from \" + s.phone() + \": \" + s.message());\n        } else if (n instanceof Push p) {\n            System.out.println(\"Push [\" + p.app() + \"]: \" + p.title());\n        }\n    }\n\n    // Even cleaner with switch (Java 21+)\n    static String summarize(Notification n) {\n        return switch (n) {\n            case Email e -> \"📧 \" + e.subject();\n            case SMS s   -> \"💬 \" + s.message();\n            case Push p  -> \"🔔 \" + p.title();\n        };\n    }\n\n    public static void main(String[] args) {\n        Notification[] inbox = {\n            new Email(\"alice@mail.com\", \"Meeting at 3pm\"),\n            new SMS(\"+359888123456\", \"On my way!\"),\n            new Push(\"Slack\", \"New message in #general\")\n        };\n\n        for (Notification n : inbox) handle(n);\n        System.out.println();\n        for (Notification n : inbox) System.out.println(summarize(n));\n    }\n}",
+"output": "Email from alice@mail.com: Meeting at 3pm\nSMS from +359888123456: On my way!\nPush [Slack]: New message in #general\n\n📧 Meeting at 3pm\n💬 On my way!\n🔔 New message in #general",
+"points": [
+"Pattern matching combines <code>instanceof</code> check and cast in one expression.",
+"The pattern variable (e.g. <code>e</code>) is scoped to the <code>if</code> block.",
+"Combined with <code>sealed</code> types, <code>switch</code> becomes exhaustive — no missed cases."
+]
+},
+{
+"id": 16,
+"title": "Inner & Nested Classes",
+"desc": "Demonstrate static nested classes, inner classes, local classes, and anonymous classes — all in one example.",
+"code": "class Outer {\n    private String name = \"Outer\";\n\n    // 1. Static nested — no access to outer instance\n    static class StaticNested {\n        void greet() { System.out.println(\"Hello from StaticNested\"); }\n    }\n\n    // 2. Inner (non-static) — has access to outer instance\n    class Inner {\n        void greet() { System.out.println(\"Hello from Inner, owner=\" + name); }\n    }\n\n    void demo() {\n        // 3. Local class — defined inside a method\n        class Local {\n            void greet() { System.out.println(\"Hello from Local, owner=\" + name); }\n        }\n        new Local().greet();\n\n        // 4. Anonymous class — one-off implementation\n        Runnable anon = new Runnable() {\n            @Override public void run() {\n                System.out.println(\"Hello from Anonymous, owner=\" + name);\n            }\n        };\n        anon.run();\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        new Outer.StaticNested().greet();   // no outer instance needed\n        new Outer().new Inner().greet();     // needs outer instance\n        new Outer().demo();                  // local + anonymous\n    }\n}",
+"output": "Hello from StaticNested\nHello from Inner, owner=Outer\nHello from Local, owner=Outer\nHello from Anonymous, owner=Outer",
+"points": [
+"Static nested classes don't need an outer instance — just <code>new Outer.Nested()</code>.",
+"Inner classes capture the enclosing <code>this</code> — requires <code>outer.new Inner()</code>.",
+"Anonymous classes are mostly replaced by lambdas in modern Java."
+]
+},
+{
+"id": 17,
+"title": "Comparable & Comparator",
+"desc": "Make a <code>Product</code> class sortable by implementing <code>Comparable</code>, then sort by different fields using <code>Comparator</code>.",
+"code": "import java.util.*;\n\nclass Product implements Comparable<Product> {\n    String name;\n    double price;\n    int rating;\n\n    Product(String name, double price, int rating) {\n        this.name = name;\n        this.price = price;\n        this.rating = rating;\n    }\n\n    // Natural ordering: by price ascending\n    @Override\n    public int compareTo(Product other) {\n        return Double.compare(this.price, other.price);\n    }\n\n    @Override\n    public String toString() {\n        return String.format(\"%-10s $%.2f ★%d\", name, price, rating);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        List<Product> products = new ArrayList<>(List.of(\n            new Product(\"Mouse\",    25.99, 4),\n            new Product(\"Keyboard\", 79.99, 5),\n            new Product(\"Monitor\",  299.99, 4),\n            new Product(\"Headset\",  59.99, 3)\n        ));\n\n        // Natural order (Comparable — by price)\n        Collections.sort(products);\n        System.out.println(\"By price:\");\n        products.forEach(System.out::println);\n\n        // Custom Comparator — by rating desc, then name\n        products.sort(Comparator.comparingInt(Product::rating).reversed()\n                                .thenComparing(Product::name));\n        System.out.println(\"\\nBy rating desc:\");\n        products.forEach(System.out::println);\n    }\n}",
+"output": "By price:\nMouse      $25.99 ★4\nHeadset    $59.99 ★3\nKeyboard   $79.99 ★5\nMonitor    $299.99 ★4\n\nBy rating desc:\nKeyboard   $79.99 ★5\nMonitor    $299.99 ★4\nMouse      $25.99 ★4\nHeadset    $59.99 ★3",
+"points": [
+"<code>Comparable</code> defines the natural ordering inside the class itself.",
+"<code>Comparator</code> allows external, multiple, and composable sort strategies.",
+"<code>Comparator.comparing(...).thenComparing(...)</code> chains sort criteria cleanly."
+]
+},
+{
+"id": 18,
+"title": "Object Cloning",
+"desc": "Implement <code>Cloneable</code> to create shallow and deep copies of an object. Show the pitfall of shallow copying mutable fields.",
+"code": "import java.util.Arrays;\n\nclass Address implements Cloneable {\n    String city;\n    Address(String city) { this.city = city; }\n\n    @Override\n    protected Address clone() throws CloneNotSupportedException {\n        return (Address) super.clone();\n    }\n    @Override public String toString() { return city; }\n}\n\nclass Person implements Cloneable {\n    String name;\n    Address address; // mutable reference!\n\n    Person(String name, Address address) {\n        this.name = name;\n        this.address = address;\n    }\n\n    // Deep clone — clone mutable fields too\n    @Override\n    protected Person clone() throws CloneNotSupportedException {\n        Person copy = (Person) super.clone();\n        copy.address = this.address.clone(); // deep copy!\n        return copy;\n    }\n\n    @Override\n    public String toString() { return name + \" from \" + address; }\n}\n\nclass Main {\n    public static void main(String[] args) throws CloneNotSupportedException {\n        Person original = new Person(\"Alice\", new Address(\"Sofia\"));\n        Person copy = original.clone();\n\n        System.out.println(\"Original: \" + original);\n        System.out.println(\"Copy    : \" + copy);\n\n        copy.address.city = \"Plovdiv\";\n        System.out.println(\"\\nAfter changing copy's city:\");\n        System.out.println(\"Original: \" + original); // still Sofia (deep copy!)\n        System.out.println(\"Copy    : \" + copy);\n    }\n}",
+"output": "Original: Alice from Sofia\nCopy    : Alice from Sofia\n\nAfter changing copy's city:\nOriginal: Alice from Sofia\nCopy    : Alice from Plovdiv",
+"points": [
+"Shallow clone copies references — both objects share mutable fields.",
+"Deep clone also clones referenced mutable objects for full independence.",
+"Modern alternative: use copy constructors or <code>record</code> with immutable fields."
+]
+},
+{
+"id": 19,
+"title": "Exception Hierarchy & Custom Exceptions",
+"desc": "Create a custom checked and unchecked exception. Use them in a service method with proper exception handling.",
+"code": "// Custom checked exception\nclass InsufficientFundsException extends Exception {\n    private final double deficit;\n\n    InsufficientFundsException(double deficit) {\n        super(String.format(\"Insufficient funds. Need $%.2f more.\", deficit));\n        this.deficit = deficit;\n    }\n\n    double getDeficit() { return deficit; }\n}\n\n// Custom unchecked exception\nclass InvalidAccountException extends RuntimeException {\n    InvalidAccountException(String id) {\n        super(\"No account found: \" + id);\n    }\n}\n\nclass WalletService {\n    private double balance;\n\n    WalletService(double balance) {\n        this.balance = balance;\n    }\n\n    void withdraw(double amount) throws InsufficientFundsException {\n        if (amount <= 0) throw new IllegalArgumentException(\"Amount must be positive\");\n        if (amount > balance) throw new InsufficientFundsException(amount - balance);\n        balance -= amount;\n        System.out.printf(\"Withdrew $%.2f. Remaining: $%.2f%n\", amount, balance);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        WalletService wallet = new WalletService(100);\n\n        try {\n            wallet.withdraw(30);\n            wallet.withdraw(200); // will throw\n        } catch (InsufficientFundsException e) {\n            System.out.println(\"Caught: \" + e.getMessage());\n            System.out.printf(\"Deficit: $%.2f%n\", e.getDeficit());\n        } finally {\n            System.out.println(\"Transaction complete.\");\n        }\n    }\n}",
+"output": "Withdrew $30.00. Remaining: $70.00\nCaught: Insufficient funds. Need $130.00 more.\nDeficit: $130.00\nTransaction complete.",
+"points": [
+"Checked exceptions (<code>extends Exception</code>) must be caught or declared with <code>throws</code>.",
+"Unchecked exceptions (<code>extends RuntimeException</code>) don't require explicit handling.",
+"Custom exceptions can carry extra data (like <code>deficit</code>) for richer error handling."
+]
+},
+{
+"id": 20,
+"title": "The Object Class",
+"desc": "Explore methods inherited from <code>java.lang.Object</code>: <code>toString()</code>, <code>equals()</code>, <code>hashCode()</code>, <code>getClass()</code>, and <code>clone()</code>.",
+"code": "class Book {\n    private String title;\n    private String author;\n\n    Book(String title, String author) {\n        this.title = title;\n        this.author = author;\n    }\n\n    // Without overriding toString, you get: Book@1a2b3c4d\n    @Override\n    public String toString() {\n        return \"\\\"\" + title + \"\\\" by \" + author;\n    }\n\n    @Override\n    public boolean equals(Object o) {\n        if (this == o) return true;\n        if (!(o instanceof Book b)) return false;\n        return title.equals(b.title) && author.equals(b.author);\n    }\n\n    @Override\n    public int hashCode() {\n        return java.util.Objects.hash(title, author);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Book b1 = new Book(\"1984\", \"Orwell\");\n        Book b2 = new Book(\"1984\", \"Orwell\");\n        Object obj = b1;\n\n        System.out.println(\"toString : \" + b1);\n        System.out.println(\"equals   : \" + b1.equals(b2));\n        System.out.println(\"hashCode : \" + b1.hashCode() + \" == \" + b2.hashCode());\n        System.out.println(\"getClass : \" + obj.getClass().getSimpleName());\n        System.out.println(\"is Book? : \" + (obj instanceof Book));\n    }\n}",
+"output": "toString : \"1984\" by Orwell\nequals   : true\nhashCode : 79541834 == 79541834\ngetClass : Book\nis Book? : true",
+"points": [
+"Every class in Java implicitly extends <code>Object</code>.",
+"Always override <code>toString()</code> for meaningful debug output.",
+"The <code>equals()</code>/<code>hashCode()</code> contract is critical for collections."
+]
+},
+// ═══════════════════════════════════════════
+// SECTION: SOLID PRINCIPLES (21–30)
+// ═══════════════════════════════════════════
+{
+"id": 21,
+"section": "SOLID Principles",
+"title": "S — Single Responsibility (SRP)",
+"desc": "Refactor a <code>User</code> class that handles validation, persistence, AND email sending into separate focused classes — each with one reason to change.",
+"badCode": "class User {\n    String name, email;\n    void validate() { /* validation */ }\n    void saveToDb() { /* SQL insert */ }\n    void sendWelcomeEmail() { /* SMTP */ }\n    // 3 reasons to change → violates SRP!\n}",
+"code": "// Each class has ONE responsibility\n\nclass User {\n    private final String name;\n    private final String email;\n\n    User(String name, String email) {\n        this.name = name;\n        this.email = email;\n    }\n\n    String getName()  { return name; }\n    String getEmail() { return email; }\n}\n\nclass UserValidator {\n    boolean isValid(User user) {\n        boolean nameOk  = user.getName() != null && !user.getName().isBlank();\n        boolean emailOk = user.getEmail() != null && user.getEmail().contains(\"@\");\n        return nameOk && emailOk;\n    }\n}\n\nclass UserRepository {\n    void save(User user) {\n        System.out.println(\"DB: Saved user '\" + user.getName() + \"'\");\n    }\n}\n\nclass EmailService {\n    void sendWelcome(User user) {\n        System.out.println(\"Email: Welcome sent to \" + user.getEmail());\n    }\n}\n\n// Orchestrator ties them together\nclass UserRegistrationService {\n    private final UserValidator validator = new UserValidator();\n    private final UserRepository repo = new UserRepository();\n    private final EmailService emailService = new EmailService();\n\n    void register(User user) {\n        if (!validator.isValid(user)) {\n            System.out.println(\"Invalid user: \" + user.getName());\n            return;\n        }\n        repo.save(user);\n        emailService.sendWelcome(user);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        UserRegistrationService service = new UserRegistrationService();\n        service.register(new User(\"Alice\", \"alice@mail.com\"));\n        service.register(new User(\"\", \"bad\"));\n    }\n}",
+"output": "DB: Saved user 'Alice'\nEmail: Welcome sent to alice@mail.com\nInvalid user: ",
+"points": [
+"<strong>SRP</strong>: A class should have only one reason to change.",
+"Validation, persistence, and notification are separate concerns.",
+"Smaller classes are easier to test, understand, and replace."
+]
+},
+{
+"id": 22,
+"title": "O — Open/Closed Principle (OCP)",
+"desc": "Design a discount system that is open for extension (new discount types) but closed for modification (no changing existing code). Use polymorphism instead of <code>if-else</code> chains.",
+"badCode": "class DiscountCalculator {\n    double calculate(String type, double price) {\n        if (type.equals(\"summer\")) return price * 0.15;\n        if (type.equals(\"vip\"))    return price * 0.20;\n        // Adding a new type = modifying this class!\n        return 0;\n    }\n}",
+"code": "// Strategy interface — open for extension\ninterface DiscountStrategy {\n    double apply(double price);\n    String name();\n}\n\n// Each strategy is a separate class\nclass SummerDiscount implements DiscountStrategy {\n    public double apply(double price) { return price * 0.15; }\n    public String name() { return \"Summer Sale (15%)\"; }\n}\n\nclass VipDiscount implements DiscountStrategy {\n    public double apply(double price) { return price * 0.20; }\n    public String name() { return \"VIP (20%)\"; }\n}\n\nclass BulkDiscount implements DiscountStrategy {\n    private final int minQty;\n    BulkDiscount(int minQty) { this.minQty = minQty; }\n    public double apply(double price) { return price * 0.10; }\n    public String name() { return \"Bulk (10%, min \" + minQty + \")\"; }\n}\n\n// Calculator is CLOSED for modification — never needs to change\nclass DiscountCalculator {\n    double calculate(double price, DiscountStrategy strategy) {\n        double discount = strategy.apply(price);\n        System.out.printf(\"%s: $%.2f → save $%.2f → pay $%.2f%n\",\n            strategy.name(), price, discount, price - discount);\n        return price - discount;\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        DiscountCalculator calc = new DiscountCalculator();\n        double price = 100.0;\n\n        calc.calculate(price, new SummerDiscount());\n        calc.calculate(price, new VipDiscount());\n        calc.calculate(price, new BulkDiscount(10));\n        // New discounts = new classes, no modification to calculator!\n    }\n}",
+"output": "Summer Sale (15%): $100.00 → save $15.00 → pay $85.00\nVIP (20%): $100.00 → save $20.00 → pay $80.00\nBulk (10%, min 10): $100.00 → save $10.00 → pay $90.00",
+"points": [
+"<strong>OCP</strong>: Software entities should be open for extension, closed for modification.",
+"New behavior = new classes implementing the interface, not modified <code>if-else</code>.",
+"The Strategy pattern is the classic way to apply OCP."
+]
+},
+{
+"id": 23,
+"title": "L — Liskov Substitution (LSP)",
+"desc": "Show an LSP violation (Square extends Rectangle but breaks area expectations), then fix it with a proper design.",
+"badCode": "class Rectangle {\n    int w, h;\n    void setWidth(int w) { this.w = w; }\n    void setHeight(int h) { this.h = h; }\n    int area() { return w * h; }\n}\nclass Square extends Rectangle {\n    void setWidth(int w) { this.w = w; this.h = w; } // BREAKS expectations!\n    void setHeight(int h) { this.w = h; this.h = h; }\n}\n// resize(rect, 5, 10) — if rect is a Square, area is 100, not 50!",
+"code": "// CORRECT: Use a common interface instead of broken inheritance\n\nsealed interface Shape permits Rectangle, Square, Circle {\n    double area();\n    String describe();\n}\n\nrecord Rectangle(double width, double height) implements Shape {\n    public double area() { return width * height; }\n    public String describe() { return \"Rect(\" + width + \"x\" + height + \")\"; }\n}\n\nrecord Square(double side) implements Shape {\n    public double area() { return side * side; }\n    public String describe() { return \"Square(\" + side + \")\"; }\n}\n\nrecord Circle(double radius) implements Shape {\n    public double area() { return Math.PI * radius * radius; }\n    public String describe() { return \"Circle(r=\" + radius + \")\"; }\n}\n\nclass AreaCalculator {\n    // Works correctly for ANY Shape — no surprises\n    static void printArea(Shape s) {\n        System.out.printf(\"%s → area = %.2f%n\", s.describe(), s.area());\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Shape[] shapes = {\n            new Rectangle(5, 10),\n            new Square(7),\n            new Circle(3)\n        };\n\n        for (Shape s : shapes) {\n            AreaCalculator.printArea(s);\n        }\n    }\n}",
+"output": "Rect(5.0x10.0) → area = 50.00\nSquare(7.0) → area = 49.00\nCircle(r=3.0) → area = 28.27",
+"points": [
+"<strong>LSP</strong>: Subclasses must be substitutable for their parent without breaking behavior.",
+"If <code>Square extends Rectangle</code>, calling <code>setWidth()</code> silently changing height is a violation.",
+"Fix: use an interface or make types independent — a Square is not a mutable Rectangle."
+]
+},
+{
+"id": 24,
+"title": "I — Interface Segregation (ISP)",
+"desc": "Refactor a fat <code>Worker</code> interface into smaller, focused interfaces so classes only implement what they need.",
+"badCode": "interface Worker {\n    void work();\n    void eat();\n    void sleep();\n    void attendMeeting();\n}\n// A Robot has to implement eat() and sleep()? Nonsense!",
+"code": "// Segregated interfaces — each focused on one capability\n\ninterface Workable {\n    void work();\n}\n\ninterface Feedable {\n    void eat();\n}\n\ninterface Restable {\n    void sleep();\n}\n\ninterface MeetingAttendee {\n    void attendMeeting();\n}\n\n// Human implements all that apply\nclass HumanWorker implements Workable, Feedable, Restable, MeetingAttendee {\n    private String name;\n    HumanWorker(String name) { this.name = name; }\n\n    public void work()           { System.out.println(name + \" is working.\"); }\n    public void eat()            { System.out.println(name + \" is eating lunch.\"); }\n    public void sleep()          { System.out.println(name + \" is sleeping.\"); }\n    public void attendMeeting()  { System.out.println(name + \" joined the meeting.\"); }\n}\n\n// Robot only implements what makes sense\nclass RobotWorker implements Workable {\n    private String model;\n    RobotWorker(String model) { this.model = model; }\n\n    public void work() { System.out.println(model + \" is assembling parts.\"); }\n    // No eat(), sleep(), or attendMeeting() — not needed!\n}\n\nclass Main {\n    static void assignTask(Workable w) { w.work(); }\n\n    public static void main(String[] args) {\n        HumanWorker alice = new HumanWorker(\"Alice\");\n        RobotWorker bot = new RobotWorker(\"ARM-7\");\n\n        assignTask(alice);\n        assignTask(bot);\n\n        alice.eat();\n        alice.attendMeeting();\n        // bot.eat(); — COMPILE ERROR, good!\n    }\n}",
+"output": "Alice is working.\nARM-7 is assembling parts.\nAlice is eating lunch.\nAlice joined the meeting.",
+"points": [
+"<strong>ISP</strong>: No client should be forced to depend on methods it does not use.",
+"Split fat interfaces into small, focused ones.",
+"Classes implement only the interfaces relevant to their behavior."
+]
+},
+{
+"id": 25,
+"title": "D — Dependency Inversion (DIP)",
+"desc": "Refactor a <code>NotificationService</code> that directly creates an <code>EmailSender</code> to depend on an abstraction instead, enabling different notification channels.",
+"badCode": "class EmailSender {\n    void send(String msg) { System.out.println(\"Email: \" + msg); }\n}\nclass NotificationService {\n    private EmailSender sender = new EmailSender(); // tight coupling!\n    void notify(String msg) { sender.send(msg); }\n}",
+"code": "// Abstraction\ninterface MessageSender {\n    void send(String message);\n}\n\n// Implementations\nclass EmailSender implements MessageSender {\n    public void send(String message) {\n        System.out.println(\"📧 Email: \" + message);\n    }\n}\n\nclass SmsSender implements MessageSender {\n    public void send(String message) {\n        System.out.println(\"💬 SMS: \" + message);\n    }\n}\n\nclass SlackSender implements MessageSender {\n    public void send(String message) {\n        System.out.println(\"🔔 Slack: \" + message);\n    }\n}\n\n// High-level module depends on ABSTRACTION, not concrete class\nclass NotificationService {\n    private final MessageSender sender; // injected dependency\n\n    NotificationService(MessageSender sender) {\n        this.sender = sender;\n    }\n\n    void notifyUser(String message) {\n        sender.send(message);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        // Easy to swap implementations!\n        NotificationService emailNotifier = new NotificationService(new EmailSender());\n        NotificationService smsNotifier   = new NotificationService(new SmsSender());\n        NotificationService slackNotifier = new NotificationService(new SlackSender());\n\n        emailNotifier.notifyUser(\"Your order shipped!\");\n        smsNotifier.notifyUser(\"Your code is 4829\");\n        slackNotifier.notifyUser(\"Deploy completed\");\n    }\n}",
+"output": "📧 Email: Your order shipped!\n💬 SMS: Your code is 4829\n🔔 Slack: Deploy completed",
+"points": [
+"<strong>DIP</strong>: High-level modules should depend on abstractions, not on concrete implementations.",
+"Inject dependencies through the constructor (Constructor Injection).",
+"New channels = new implementations, zero changes to <code>NotificationService</code>."
+]
+},
+{
+"id": 26,
+"title": "SOLID Combined — Logger System",
+"desc": "Build a logging system that applies all five SOLID principles: pluggable log destinations, filtered log levels, and formatted output.",
+"code": "import java.util.*;\n\n// --- ISP: small, focused interfaces ---\ninterface LogFormatter {\n    String format(String level, String message);\n}\n\ninterface LogDestination {\n    void write(String formattedMessage);\n}\n\n// --- OCP: new formatters/destinations without modifying Logger ---\nclass SimpleFormatter implements LogFormatter {\n    public String format(String level, String message) {\n        return \"[\" + level + \"] \" + message;\n    }\n}\n\nclass ConsoleDestination implements LogDestination {\n    public void write(String msg) { System.out.println(msg); }\n}\n\nclass FileDestination implements LogDestination {\n    private final String filename;\n    FileDestination(String filename) { this.filename = filename; }\n    public void write(String msg) {\n        System.out.println(\"(→ \" + filename + \") \" + msg);\n    }\n}\n\n// --- SRP: Logger only orchestrates; doesn't format or write ---\n// --- DIP: depends on abstractions (interfaces), not concrete classes ---\nclass Logger {\n    private final LogFormatter formatter;\n    private final List<LogDestination> destinations;\n    private final Set<String> enabledLevels;\n\n    Logger(LogFormatter formatter, List<LogDestination> destinations, Set<String> levels) {\n        this.formatter = formatter;\n        this.destinations = destinations;\n        this.enabledLevels = levels;\n    }\n\n    void log(String level, String message) {\n        if (!enabledLevels.contains(level)) return;\n        String formatted = formatter.format(level, message);\n        for (LogDestination dest : destinations) dest.write(formatted);\n    }\n\n    void info(String msg)  { log(\"INFO\", msg); }\n    void warn(String msg)  { log(\"WARN\", msg); }\n    void error(String msg) { log(\"ERROR\", msg); }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Logger logger = new Logger(\n            new SimpleFormatter(),\n            List.of(new ConsoleDestination(), new FileDestination(\"app.log\")),\n            Set.of(\"INFO\", \"WARN\", \"ERROR\")\n        );\n\n        logger.info(\"Application started\");\n        logger.warn(\"Memory usage high\");\n        logger.error(\"Connection lost\");\n    }\n}",
+"output": "[INFO] Application started\n(→ app.log) [INFO] Application started\n[WARN] Memory usage high\n(→ app.log) [WARN] Memory usage high\n[ERROR] Connection lost\n(→ app.log) [ERROR] Connection lost",
+"points": [
+"<strong>SRP</strong>: Logger orchestrates; formatter formats; destination writes.",
+"<strong>OCP</strong>: Add new formatters or destinations without changing <code>Logger</code>.",
+"<strong>LSP</strong>: Any <code>LogDestination</code> works wherever one is expected.",
+"<strong>ISP</strong>: Formatter and Destination are separate small interfaces.",
+"<strong>DIP</strong>: Logger depends on abstractions, injected via constructor."
+]
+},
+{
+"id": 27,
+"title": "SOLID Combined — Payment Processing",
+"desc": "Design a payment system with multiple payment methods, validation, and receipt generation — applying all SOLID principles.",
+"code": "import java.util.*;\n\n// ISP: separate interfaces for each capability\ninterface PaymentProcessor {\n    boolean processPayment(double amount);\n    String methodName();\n}\n\ninterface PaymentValidator {\n    boolean validate(double amount);\n}\n\ninterface ReceiptGenerator {\n    void generateReceipt(String method, double amount, boolean success);\n}\n\n// OCP: new payment methods = new classes\nclass CreditCardProcessor implements PaymentProcessor {\n    public boolean processPayment(double amount) {\n        System.out.printf(\"  Charging credit card $%.2f...%n\", amount);\n        return true;\n    }\n    public String methodName() { return \"Credit Card\"; }\n}\n\nclass PayPalProcessor implements PaymentProcessor {\n    public boolean processPayment(double amount) {\n        System.out.printf(\"  Processing PayPal $%.2f...%n\", amount);\n        return true;\n    }\n    public String methodName() { return \"PayPal\"; }\n}\n\nclass CryptoProcessor implements PaymentProcessor {\n    public boolean processPayment(double amount) {\n        System.out.printf(\"  Sending crypto equivalent of $%.2f...%n\", amount);\n        return amount < 10000; // limit\n    }\n    public String methodName() { return \"Crypto\"; }\n}\n\n// SRP: validator only validates\nclass AmountValidator implements PaymentValidator {\n    public boolean validate(double amount) {\n        return amount > 0 && amount <= 50000;\n    }\n}\n\n// SRP: receipt only generates output\nclass ConsoleReceipt implements ReceiptGenerator {\n    public void generateReceipt(String method, double amount, boolean success) {\n        String status = success ? \"SUCCESS\" : \"FAILED\";\n        System.out.printf(\"  Receipt: %s via %s — %s%n%n\", \n            String.format(\"$%.2f\", amount), method, status);\n    }\n}\n\n// DIP: depends on abstractions\nclass PaymentService {\n    private final PaymentValidator validator;\n    private final ReceiptGenerator receipt;\n\n    PaymentService(PaymentValidator validator, ReceiptGenerator receipt) {\n        this.validator = validator;\n        this.receipt = receipt;\n    }\n\n    void pay(double amount, PaymentProcessor processor) {\n        System.out.println(\"Processing \" + processor.methodName() + \":\");\n        if (!validator.validate(amount)) {\n            System.out.println(\"  Invalid amount!\");\n            receipt.generateReceipt(processor.methodName(), amount, false);\n            return;\n        }\n        boolean ok = processor.processPayment(amount);\n        receipt.generateReceipt(processor.methodName(), amount, ok);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        PaymentService service = new PaymentService(\n            new AmountValidator(), new ConsoleReceipt()\n        );\n\n        service.pay(49.99, new CreditCardProcessor());\n        service.pay(150.00, new PayPalProcessor());\n        service.pay(15000, new CryptoProcessor());\n    }\n}",
+"output": "Processing Credit Card:\n  Charging credit card $49.99...\n  Receipt: $49.99 via Credit Card — SUCCESS\n\nProcessing PayPal:\n  Processing PayPal $150.00...\n  Receipt: $150.00 via PayPal — SUCCESS\n\nProcessing Crypto:\n  Sending crypto equivalent of $15000.00...\n  Receipt: $15000.00 via Crypto — FAILED",
+"points": [
+"All five SOLID principles work together in a real-world scenario.",
+"Adding Bitcoin payments = one new class, zero changes elsewhere.",
+"Validation, processing, and receipts are independently testable and replaceable."
+]
+},
+{
+"id": 28,
+"title": "Design Pattern — Strategy",
+"desc": "Implement the Strategy pattern to allow switching sorting algorithms at runtime. Show how it naturally emerges from OCP and DIP.",
+"code": "import java.util.*;\n\n// Strategy interface\ninterface SortStrategy {\n    void sort(int[] array);\n    String name();\n}\n\nclass BubbleSort implements SortStrategy {\n    public void sort(int[] a) {\n        for (int i = 0; i < a.length - 1; i++)\n            for (int j = 0; j < a.length - i - 1; j++)\n                if (a[j] > a[j+1]) { int t = a[j]; a[j] = a[j+1]; a[j+1] = t; }\n    }\n    public String name() { return \"Bubble Sort\"; }\n}\n\nclass SelectionSort implements SortStrategy {\n    public void sort(int[] a) {\n        for (int i = 0; i < a.length - 1; i++) {\n            int min = i;\n            for (int j = i+1; j < a.length; j++) if (a[j] < a[min]) min = j;\n            int t = a[min]; a[min] = a[i]; a[i] = t;\n        }\n    }\n    public String name() { return \"Selection Sort\"; }\n}\n\n// Context class — delegates to the strategy\nclass Sorter {\n    private SortStrategy strategy;\n\n    Sorter(SortStrategy strategy) { this.strategy = strategy; }\n\n    void setStrategy(SortStrategy strategy) { this.strategy = strategy; }\n\n    void sortAndPrint(int[] data) {\n        int[] copy = data.clone();\n        strategy.sort(copy);\n        System.out.println(strategy.name() + \": \" + Arrays.toString(copy));\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        int[] data = {64, 25, 12, 22, 11};\n        System.out.println(\"Original: \" + Arrays.toString(data));\n\n        Sorter sorter = new Sorter(new BubbleSort());\n        sorter.sortAndPrint(data);\n\n        sorter.setStrategy(new SelectionSort()); // swap at runtime!\n        sorter.sortAndPrint(data);\n    }\n}",
+"output": "Original: [64, 25, 12, 22, 11]\nBubble Sort: [11, 12, 22, 25, 64]\nSelection Sort: [11, 12, 22, 25, 64]",
+"points": [
+"Strategy pattern encapsulates algorithms and makes them interchangeable.",
+"Follows OCP: new algorithms = new classes, no modification to <code>Sorter</code>.",
+"Follows DIP: <code>Sorter</code> depends on <code>SortStrategy</code> abstraction."
+]
+},
+{
+"id": 29,
+"title": "Design Pattern — Observer",
+"desc": "Implement the Observer pattern: a <code>Store</code> notifies registered customers when a product's price drops.",
+"code": "import java.util.*;\n\n// Observer interface\ninterface PriceObserver {\n    void onPriceChange(String product, double oldPrice, double newPrice);\n}\n\n// Subject\nclass Store {\n    private final Map<String, Double> prices = new HashMap<>();\n    private final List<PriceObserver> observers = new ArrayList<>();\n\n    void addObserver(PriceObserver o)    { observers.add(o); }\n    void removeObserver(PriceObserver o) { observers.remove(o); }\n\n    void setPrice(String product, double price) {\n        double oldPrice = prices.getOrDefault(product, 0.0);\n        prices.put(product, price);\n        if (price < oldPrice) { // notify only on price drop\n            for (PriceObserver o : observers)\n                o.onPriceChange(product, oldPrice, price);\n        }\n    }\n}\n\n// Concrete observers\nclass Customer implements PriceObserver {\n    private final String name;\n    Customer(String name) { this.name = name; }\n\n    @Override\n    public void onPriceChange(String product, double oldPrice, double newPrice) {\n        System.out.printf(\"  %s notified: %s dropped $%.2f → $%.2f!%n\",\n            name, product, oldPrice, newPrice);\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        Store store = new Store();\n        Customer alice = new Customer(\"Alice\");\n        Customer bob   = new Customer(\"Bob\");\n\n        store.addObserver(alice);\n        store.addObserver(bob);\n\n        store.setPrice(\"Laptop\", 999.99);\n        System.out.println(\"Price set to $999.99 — no notification (first price)\");\n\n        store.setPrice(\"Laptop\", 1099.99);\n        System.out.println(\"Price raised — no notification\");\n\n        System.out.println(\"Price dropped:\");\n        store.setPrice(\"Laptop\", 849.99); // triggers notification\n    }\n}",
+"output": "Price set to $999.99 — no notification (first price)\nPrice raised — no notification\nPrice dropped:\n  Alice notified: Laptop dropped $1099.99 → $849.99!\n  Bob notified: Laptop dropped $1099.99 → $849.99!",
+"points": [
+"Observer pattern establishes a one-to-many dependency between objects.",
+"When the subject's state changes, all registered observers are notified.",
+"Follows OCP: new observer types without modifying <code>Store</code>.",
+"Follows DIP: <code>Store</code> depends on <code>PriceObserver</code> abstraction."
+]
+},
+{
+"id": 30,
+"title": "Design Pattern — Factory Method",
+"desc": "Use the Factory Method pattern to create different <code>Document</code> types without exposing creation logic. Combine with SOLID principles.",
+"code": "import java.util.*;\n\n// Product interface\ninterface Document {\n    void open();\n    void save();\n    String type();\n}\n\nclass PdfDocument implements Document {\n    public void open() { System.out.println(\"  Opening PDF viewer...\"); }\n    public void save() { System.out.println(\"  Saving as .pdf\"); }\n    public String type() { return \"PDF\"; }\n}\n\nclass WordDocument implements Document {\n    public void open() { System.out.println(\"  Opening word processor...\"); }\n    public void save() { System.out.println(\"  Saving as .docx\"); }\n    public String type() { return \"Word\"; }\n}\n\nclass SpreadsheetDocument implements Document {\n    public void open() { System.out.println(\"  Opening spreadsheet app...\"); }\n    public void save() { System.out.println(\"  Saving as .xlsx\"); }\n    public String type() { return \"Spreadsheet\"; }\n}\n\n// Factory with static method\nclass DocumentFactory {\n    static Document create(String extension) {\n        return switch (extension.toLowerCase()) {\n            case \"pdf\"  -> new PdfDocument();\n            case \"docx\" -> new WordDocument();\n            case \"xlsx\" -> new SpreadsheetDocument();\n            default     -> throw new IllegalArgumentException(\"Unknown: \" + extension);\n        };\n    }\n}\n\nclass Main {\n    public static void main(String[] args) {\n        List<String> files = List.of(\"pdf\", \"docx\", \"xlsx\", \"pdf\");\n\n        for (String ext : files) {\n            Document doc = DocumentFactory.create(ext);\n            System.out.println(doc.type() + \" document:\");\n            doc.open();\n            doc.save();\n            System.out.println();\n        }\n    }\n}",
+"output": "PDF document:\n  Opening PDF viewer...\n  Saving as .pdf\n\nWord document:\n  Opening word processor...\n  Saving as .docx\n\nSpreadsheet document:\n  Opening spreadsheet app...\n  Saving as .xlsx\n\nPDF document:\n  Opening PDF viewer...\n  Saving as .pdf",
+"points": [
+"Factory Method encapsulates object creation — callers don't know concrete classes.",
+"Adding new document types only requires a new class and one factory case.",
+"Follows DIP: client code depends on <code>Document</code> interface, not implementations.",
+"Follows OCP: extend with new types without modifying existing document classes."
+]
+}
+];
+
+// ── Sections ──
+const SECTIONS = {};
+DATA.forEach(t => {
+  if (t.section) SECTIONS[t.id] = t.section;
+});
+
+// ── Build TOC ──
+const tocEl = document.getElementById('toc');
+DATA.forEach(t => {
+  const a = document.createElement('a');
+  a.href = '#task-' + t.id;
+  a.innerHTML = '<span class="toc-num">' + String(t.id).padStart(2, '0') + '</span>' + t.title;
+  tocEl.appendChild(a);
+});
+
+// ── Build Tasks ──
+const tasksEl = document.getElementById('tasks');
+DATA.forEach(t => {
+  let html = '';
+
+  // Section divider
+  if (SECTIONS[t.id]) {
+    html += '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-label">' + SECTIONS[t.id] + '</div><div class="section-divider-line"></div></div>';
+  }
+
+  html += '<div class="task-card" id="task-' + t.id + '">';
+  html += '<div class="task-header"><span class="task-number">' + String(t.id).padStart(2, '0') + '</span><div class="task-content"><div class="task-title">' + t.title + '</div><div class="task-desc">' + t.desc + '</div></div></div>';
+
+  // Bad code
+  if (t.badCode) {
+    html += '<div class="bad-code"><div class="bad-code-label">✗ Before (Problem)</div><pre>' + highlight(t.badCode) + '</pre></div>';
+  }
+
+  // Toggle
+  html += '<div class="solution-toggle" onclick="this.parentElement.classList.toggle(\'open\')"><div class="solution-toggle-left"><span>▶</span> Solution</div><svg class="toggle-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>';
+
+  // Solution body
+  html += '<div class="solution-body">';
+  html += '<div class="code-wrap"><div class="code-lang"><span class="lang-dot"></span>java<button class="copy-btn" onclick="event.stopPropagation();copyCode(this)">Copy</button></div>';
+  html += '<pre class="code-block">' + highlight(t.code) + '</pre></div>';
+
+  if (t.output) {
+    html += '<div class="output-block"><div class="output-label">Output</div><pre>' + t.output + '</pre></div>';
+  }
+
+  // Key points or table
+  if (t.points) {
+    html += '<div class="key-points"><div class="key-points-title">Key Points</div>';
+    t.points.forEach(p => { html += '<div class="key-point">' + p + '</div>'; });
+    html += '</div>';
+  }
+  if (t.table) {
+    html += '<div class="key-points"><div class="key-points-title">Comparison</div><table class="kp-table"><tr>';
+    t.table.headers.forEach(h => { html += '<th>' + h + '</th>'; });
+    html += '</tr>';
+    t.table.rows.forEach(r => { html += '<tr>'; r.forEach(c => { html += '<td>' + c + '</td>'; }); html += '</tr>'; });
+    html += '</table></div>';
+  }
+
+  html += '</div></div>';
+  tasksEl.innerHTML += html;
+});
+
+// ── Copy ──
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('.code-block');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+</script>
+</body>
+</html>
