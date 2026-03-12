@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: theatre-ticketing
+  profiles:
+    active: dev
+
+logging:
+  level:
+    root: INFO
+    bg.uni.fmi.theatre: INFO
