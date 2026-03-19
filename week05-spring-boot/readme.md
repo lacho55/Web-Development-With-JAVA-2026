@@ -3,13 +3,6 @@
 ## Task 1 - migrate your Theatre Ticketing System to a Spring Boot application
 1. To achieve this task you will need to create a Spring Boot application with IntelliJ Ultimate or [spring-initializr](https://start.spring.io/) to create a Spring Boot application.
 
-<big><pre>
-If you are having trouble with the starter you can check the following [documentation](https://github.com/lacho55/Web-Development-With-JAVA-2026/tree/main/week04/spring-initializr-tutorial.md)
-</pre></big>
-
-<big><pre>
-In case you need additional information about Spring/Spring Boot/Maven, use the following [documentation](https://github.com/lacho55/Web-Development-With-JAVA-2026/tree/main/week04/basic-guide.md)
-</pre></big>
 
 
 2. Create the proper Bean definition and connect all project dependencies
