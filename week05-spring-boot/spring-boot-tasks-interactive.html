@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot — Project Creation & Bean Management</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14; --surface:#13161e; --surface2:#1a1e2a; --border:#252a38;
+    --accent:#6db33f; --accent2:#4ec9b0; --accent3:#ce9178;
+    --text:#d4d8e8; --text-dim:#6b7394; --text-bright:#eef0f8;
+    --kw:#569cd6; --str:#ce9178; --cmt:#6a9955; --typ:#4ec9b0;
+    --num:#b5cea8; --mth:#dcdcaa; --ann:#dcdcaa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7}
+  header{background:linear-gradient(135deg,#0d0f14 0%,#0f1a13 100%);border-bottom:1px solid var(--border);padding:48px 40px 36px;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(109,179,63,.15) 0%,transparent 70%);pointer-events:none}
+  header::after{content:'';position:absolute;bottom:-40px;left:20%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(78,201,176,.08) 0%,transparent 70%);pointer-events:none}
+  .header-inner{max-width:900px;margin:0 auto;position:relative}
+  .header-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;opacity:.8}
+  h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,4vw,46px);color:var(--text-bright);line-height:1.1;margin-bottom:14px}
+  h1 span{color:var(--accent)}
+  .header-sub{font-size:15px;color:var(--text-dim);line-height:1.6;max-width:600px}
+  .header-meta{font-size:14px;color:var(--text-dim);display:flex;gap:24px;flex-wrap:wrap;align-items:center;margin-top:20px}
+  .meta-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--text-dim)}
+  .container{max-width:900px;margin:0 auto;padding:40px 40px 80px}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:48px}
+  .toc-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:20px}
+  .toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px 24px}
+  .toc-grid a{color:var(--text-dim);text-decoration:none;font-size:13px;font-family:'JetBrains Mono',monospace;padding:4px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px}
+  .toc-grid a:hover{color:var(--accent);border-color:var(--accent)}
+  .toc-num{color:var(--accent);opacity:.5;min-width:22px;font-size:11px}
+  .section-divider{display:flex;align-items:center;gap:16px;margin:56px 0 28px}
+  .section-divider-line{flex:1;height:1px;background:var(--border)}
+  .section-divider-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px}
+  .task-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+  .task-card:hover{border-color:#2e3448}
+  .task-header{padding:20px 24px;display:flex;align-items:flex-start;gap:16px}
+  .task-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(109,179,63,.1);border:1px solid rgba(109,179,63,.2);border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+  .task-content{flex:1}
+  .task-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:8px;line-height:1.3}
+  .task-desc{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .task-desc code,.key-point code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent3);background:rgba(206,145,120,.08);padding:1px 5px;border-radius:3px}
+  .bad-code{margin:0 24px 12px;background:rgba(255,80,80,.04);border:1px solid rgba(255,80,80,.15);border-radius:8px;overflow:hidden}
+  .bad-code-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#ff6b6b;padding:6px 14px;background:rgba(255,80,80,.07);border-bottom:1px solid rgba(255,80,80,.1)}
+  .bad-code pre{padding:14px 16px;font-size:12px;color:var(--text-dim);overflow-x:auto;font-family:'JetBrains Mono',monospace}
+  .solution-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;cursor:pointer;background:var(--surface2);border-top:1px solid var(--border);user-select:none;transition:background .15s;gap:12px}
+  .solution-toggle:hover{background:#1e2332}
+  .solution-toggle-left{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.5px}
+  .toggle-arrow{margin-left:auto;color:var(--text-dim);transition:transform .25s ease;flex-shrink:0}
+  .task-card.open .toggle-arrow{transform:rotate(180deg)}
+  .task-card.open .solution-toggle{background:rgba(78,201,176,.06)}
+  .solution-body{display:none;border-top:1px solid var(--border)}
+  .task-card.open .solution-body{display:block}
+  .code-wrap{position:relative}
+  .code-lang{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);padding:10px 16px 4px;background:#0f1118;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1e2030}
+  .lang-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .lang-dot.java{background:#f89820}
+  .lang-dot.props{background:var(--accent2)}
+  .lang-dot.xml{background:#e44d26}
+  .lang-dot.bash{background:var(--accent2)}
+  .copy-btn{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);background:none;border:1px solid var(--border);border-radius:4px;padding:3px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+  .copy-btn:hover,.copy-btn.copied{color:var(--accent2);border-color:var(--accent2)}
+  pre.code-block{background:#0f1118;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;color:var(--text);tab-size:4;margin:0}
+  .kw{color:var(--kw)}.str{color:var(--str)}.cmt{color:var(--cmt);font-style:italic}.typ{color:var(--typ)}.num{color:var(--num)}.mth{color:var(--mth)}.ann{color:var(--ann)}
+  .output-block{background:#090b10;border-top:1px solid #1a1d28;padding:16px 20px}
+  .output-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+  .output-block pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:#88c0d0;line-height:1.6;white-space:pre-wrap}
+  .key-points{padding:18px 24px;background:rgba(109,179,63,.03);border-top:1px solid rgba(109,179,63,.1)}
+  .key-points-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);opacity:.7;margin-bottom:10px}
+  .key-point{display:flex;gap:10px;font-size:13px;color:var(--text-dim);padding:3px 0;line-height:1.55}
+  .key-point::before{content:'→';color:var(--accent);opacity:.5;flex-shrink:0;margin-top:1px}
+  .kp-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  .kp-table th{text-align:left;padding:7px 12px;background:#1a1e2a;color:var(--text-dim);font-weight:500;border:1px solid var(--border)}
+  .kp-table td{padding:6px 12px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text)}
+  .scenario{margin:0 24px 12px;background:rgba(78,201,176,.04);border:1px solid rgba(78,201,176,.15);border-radius:8px;overflow:hidden}
+  .scenario-label{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent2);padding:6px 14px;background:rgba(78,201,176,.07);border-bottom:1px solid rgba(78,201,176,.1)}
+  .scenario pre{padding:14px 16px;font-size:12px;color:var(--text-dim);overflow-x:auto;font-family:'JetBrains Mono',monospace;line-height:1.6}
+  @media(max-width:640px){header{padding:32px 20px 24px}.container{padding:28px 16px 60px}.toc{padding:20px}.task-header{padding:16px 18px}.solution-toggle{padding:12px 18px}}
+  ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2e3448;border-radius:3px}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="header-label">// hands-on lab</div>
+    <h1>Spring Boot <span>Tasks</span> &amp; Practice</h1>
+    <p class="header-sub">Project creation, bean management, dependency injection, scopes &amp; lifecycle — all hands-on.</p>
+    <div class="header-meta">
+      <span class="meta-pill">30 Tasks</span>
+      <span class="meta-pill">Basics &rarr; Advanced</span>
+      <span class="meta-pill">Java / Spring Boot 3</span>
+      <span style="font-size:13px;color:var(--text-dim)">Click <strong style="color:var(--accent2)">&#9658; Solution</strong> to reveal each answer</span>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="toc"><div class="toc-title">Table of Contents</div><div class="toc-grid" id="toc"></div></div>
+  <div id="tasks"></div>
+</div>
+
+<script>
+function highlightJava(raw) {
+  let s = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Comments
+  const cmtTokens = [];
+  s = s.replace(/(\/\/[^\n]*)/g, (m) => {
+    const idx = cmtTokens.length;
+    cmtTokens.push('<span class="cmt">' + m + '</span>');
+    return '\x00CMT' + idx + '\x00';
+  });
+
+  // Strings
+  const strTokens = [];
+  s = s.replace(/"([^"\\]|\\.)*"/g, m => {
+    const idx = strTokens.length;
+    strTokens.push('<span class="str">' + m + '</span>');
+    return '\x00STR' + idx + '\x00';
+  });
+
+  // Annotations
+  const annTokens = [];
+  s = s.replace(/@[A-Z]\w*(\([^)]*\))?/g, m => {
+    const idx = annTokens.length;
+    annTokens.push('<span class="ann">' + m + '</span>');
+    return '\x00ANN' + idx + '\x00';
+  });
+
+  // Keywords
+  const keywords = ['public','private','protected','class','interface','extends','implements',
+    'import','package','return','new','void','static','final','abstract','default',
+    'if','else','for','while','do','switch','case','break','continue','try','catch',
+    'finally','throw','throws','this','super','null','true','false','instanceof',
+    'var','record','sealed','permits','yield','enum','assert','synchronized','volatile',
+    'transient','native','strictfp'];
+  keywords.forEach(kw => {
+    s = s.replace(new RegExp('(?<![\\w])(' + kw + ')(?=[\\s({;,.<\\x00\\n]|$)', 'g'),
+      '<span class="kw">$1</span>');
+  });
+
+  // Types
+  const types = ['String','int','long','boolean','double','float','char','byte','short',
+    'Integer','Long','Boolean','Double','Float','List','Map','Set','Optional',
+    'BigDecimal','Object','Arrays','System','ApplicationContext','ConfigurableApplicationContext',
+    'SpringApplication','RestTemplate','ObjectMapper','CommandLineRunner','ApplicationRunner',
+    'ObjectProvider','ThreadPoolTaskExecutor','Executor','ConcurrentHashMap',
+    'ArrayList','HashMap','Exception'];
+  types.forEach(t => {
+    const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    s = s.replace(new RegExp('(?<![\\w])(' + escaped + ')(?=[\\s<.;,()\\x00\\n]|$)', 'g'),
+      '<span class="typ">$1</span>');
+  });
+
+  // Numbers
+  s = s.replace(/(?<=[\s(=,+\-*/])(\d+\.?\d*[fFdDlL]?)(?=[\s);,\x00\n]|$)/g, '<span class="num">$1</span>');
+
+  // Method calls
+  s = s.replace(/\.(\w+)(?=\()/g, '.<span class="mth">$1</span>');
+
+  // Restore
+  annTokens.forEach((val, i) => { s = s.replace('\x00ANN' + i + '\x00', val); });
+  cmtTokens.forEach((val, i) => { s = s.replace('\x00CMT' + i + '\x00', val); });
+  strTokens.forEach((val, i) => { s = s.replace('\x00STR' + i + '\x00', val); });
+
+  return s;
+}
+
+const DATA = [
+// ═══════════════════════════════════════════
+// SECTION: PROJECT CREATION
+// ═══════════════════════════════════════════
+{
+"id": 1,
+"section": "Project Creation",
+"title": "Create a Project with Spring Initializr",
+"desc": "Use <code>start.spring.io</code> to generate a Spring Boot project with the Spring Web dependency. Import it into your IDE and run it.",
+"lang": "bash",
+"code": "# Option 1: Use the web UI\n# Go to https://start.spring.io\n# Select: Maven, Java 21, Spring Boot 3.3.x\n# Add dependency: Spring Web\n# Click Generate → unzip\n\n# Option 2: Use curl\n$ curl https://start.spring.io/starter.zip \\\n  -d dependencies=web \\\n  -d javaVersion=21 \\\n  -d type=maven-project \\\n  -d groupId=com.example \\\n  -d artifactId=demo \\\n  -o demo.zip\n$ unzip demo.zip -d demo\n$ cd demo\n\n# Run the application\n$ ./mvnw spring-boot:run",
+"output": "  .   ____          _            __ _ _\n /\\\\ / ___'_ __ _ _(_)_ __  __ _ \\ \\ \\ \\\n( ( )\\___ | '_ | '_| | '_ \\/ _` | \\ \\ \\ \\\n \\\\/  ___)| |_)| | | | | || (_| |  ) ) ) )\n  '  |____| .__|_| |_|_| |_\\__, | / / / /\n =========|_|==============|___/=/_/_/_/\n\nStarted DemoApplication in 1.832 seconds",
+"points": [
+"Spring Initializr at <code>start.spring.io</code> is the official project generator.",
+"The Maven wrapper (<code>mvnw</code>) lets you run Maven without installing it globally.",
+"Visit <code>http://localhost:8080</code> — a Whitelabel Error Page confirms the server is running."
+]
+},
+{
+"id": 2,
+"title": "Understand the POM File",
+"desc": "Examine the generated <code>pom.xml</code>. Identify the parent POM, starter dependencies, and the Spring Boot Maven plugin.",
+"lang": "xml",
+"code": "&lt;!-- The parent POM provides dependency management --&gt;\n&lt;parent&gt;\n    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;\n    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;\n    &lt;version&gt;3.3.0&lt;/version&gt;\n&lt;/parent&gt;\n\n&lt;properties&gt;\n    &lt;java.version&gt;21&lt;/java.version&gt;\n&lt;/properties&gt;\n\n&lt;dependencies&gt;\n    &lt;!-- Starter = curated group of dependencies --&gt;\n    &lt;dependency&gt;\n        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;\n        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;\n        &lt;!-- No version needed — inherited from parent --&gt;\n    &lt;/dependency&gt;\n\n    &lt;dependency&gt;\n        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;\n        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;\n        &lt;scope&gt;test&lt;/scope&gt;\n    &lt;/dependency&gt;\n&lt;/dependencies&gt;\n\n&lt;build&gt;\n    &lt;plugins&gt;\n        &lt;!-- Enables: mvnw spring-boot:run and fat JAR packaging --&gt;\n        &lt;plugin&gt;\n            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;\n            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;\n        &lt;/plugin&gt;\n    &lt;/plugins&gt;\n&lt;/build&gt;",
+"points": [
+"<code>spring-boot-starter-parent</code> manages versions for hundreds of dependencies — no version conflicts.",
+"<code>spring-boot-starter-web</code> pulls in: Spring MVC, embedded Tomcat, Jackson JSON.",
+"<code>spring-boot-maven-plugin</code> creates an executable fat JAR with <code>mvn package</code>.",
+"Run <code>./mvnw dependency:tree</code> to see everything a starter brings in."
+]
+},
+{
+"id": 3,
+"title": "Explore the Project Structure",
+"desc": "Navigate the generated project. Understand where source code, resources, tests, and configuration files live.",
+"lang": "bash",
+"code": "$ tree src/\nsrc/\n├── main/\n│   ├── java/\n│   │   └── com/example/demo/\n│   │       └── DemoApplication.java     # Entry point\n│   └── resources/\n│       ├── application.properties       # Configuration\n│       ├── static/                      # CSS, JS, images\n│       └── templates/                   # Thymeleaf templates\n└── test/\n    └── java/\n        └── com/example/demo/\n            └── DemoApplicationTests.java # Test class\n\n# Key files at the root:\n$ ls\npom.xml   mvnw   mvnw.cmd   src/   .gitignore",
+"points": [
+"All Java code goes under <code>src/main/java</code> in your base package.",
+"<code>application.properties</code> (or <code>.yml</code>) is the main configuration file.",
+"Tests mirror the main source structure under <code>src/test/java</code>.",
+"The <code>static/</code> folder serves files directly (e.g., <code>/style.css</code>)."
+]
+},
+{
+"id": 4,
+"title": "The @SpringBootApplication Annotation",
+"desc": "Understand what <code>@SpringBootApplication</code> does. It's a meta-annotation combining three core annotations.",
+"lang": "java",
+"code": "// @SpringBootApplication is equivalent to ALL THREE of these:\n@Configuration            // This class can define @Bean methods\n@EnableAutoConfiguration  // Enable Spring Boot auto-config magic\n@ComponentScan            // Scan this package + sub-packages for beans\npublic class DemoApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(DemoApplication.class, args);\n    }\n}\n\n// You can customize each one individually:\n@SpringBootApplication(\n    scanBasePackages = \"com.example\",         // custom scan\n    exclude = DataSourceAutoConfiguration.class // skip auto-config\n)\npublic class DemoApplication { ... }",
+"points": [
+"<code>@Configuration</code> — marks the class as a source of bean definitions.",
+"<code>@EnableAutoConfiguration</code> — Spring Boot configures beans based on classpath contents.",
+"<code>@ComponentScan</code> — scans from this package downward for <code>@Component</code>, <code>@Service</code>, etc.",
+"Place your main class at the ROOT of your package hierarchy so scanning works correctly."
+]
+},
+{
+"id": 5,
+"title": "Print All Beans on Startup",
+"desc": "Access the <code>ApplicationContext</code> to list every bean Spring has created. See how many beans auto-configuration provides.",
+"lang": "java",
+"code": "import org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\nimport org.springframework.context.ApplicationContext;\nimport java.util.Arrays;\n\n@SpringBootApplication\npublic class DemoApplication {\n    public static void main(String[] args) {\n        ApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);\n\n        String[] beanNames = ctx.getBeanDefinitionNames();\n        Arrays.sort(beanNames);\n\n        System.out.println(\"\\n=== Registered Beans: \" + beanNames.length + \" ===\");\n        for (String name : beanNames) {\n            System.out.println(\"  \" + name);\n        }\n    }\n}",
+"output": "=== Registered Beans: 142 ===\n  basicErrorController\n  beanNameViewResolver\n  characterEncodingFilter\n  demoApplication\n  dispatcherServlet\n  httpRequestHandlerAdapter\n  jacksonObjectMapper\n  ...",
+"points": [
+"A basic Spring Boot web app registers 100+ beans automatically.",
+"Beans like <code>dispatcherServlet</code>, <code>jacksonObjectMapper</code>, <code>tomcatServletWebServerFactory</code> are auto-configured.",
+"Your own beans (e.g., <code>demoApplication</code>) appear alongside framework beans.",
+"This is the power of auto-configuration — convention over configuration."
+]
+},
+{
+"id": 6,
+"title": "Configure application.properties",
+"desc": "Change the server port, add custom properties, and inject them into a component using <code>@Value</code>.",
+"lang": "java",
+"code": "// application.properties:\n// server.port=9090\n// app.name=My Demo App\n// app.greeting=Hello from Spring Boot!\n\nimport org.springframework.beans.factory.annotation.Value;\nimport org.springframework.stereotype.Component;\nimport jakarta.annotation.PostConstruct;\n\n@Component\npublic class AppInfo {\n\n    @Value(\"${app.name}\")\n    private String appName;\n\n    @Value(\"${app.greeting}\")\n    private String greeting;\n\n    @Value(\"${app.timeout:5000}\")  // default value if missing\n    private int timeout;\n\n    @PostConstruct\n    public void printInfo() {\n        System.out.println(\"App: \" + appName);\n        System.out.println(\"Greeting: \" + greeting);\n        System.out.println(\"Timeout: \" + timeout + \"ms\");\n    }\n}",
+"output": "App: My Demo App\nGreeting: Hello from Spring Boot!\nTimeout: 5000ms",
+"points": [
+"<code>@Value(\"${key}\")</code> injects a property value. <code>@Value(\"${key:default}\")</code> provides a fallback.",
+"Properties are loaded from <code>application.properties</code> or <code>application.yml</code>.",
+"Environment variables and command-line args can override properties.",
+"For type-safe config, prefer <code>@ConfigurationProperties</code> over many <code>@Value</code> annotations."
+]
+},
+{
+"id": 7,
+"title": "Use Spring Profiles",
+"desc": "Create environment-specific configuration files and activate them at runtime.",
+"lang": "java",
+"code": "// application-dev.properties:\n// server.port=8080\n// app.env=development\n// logging.level.com.example=DEBUG\n\n// application-prod.properties:\n// server.port=80\n// app.env=production\n// logging.level.com.example=WARN\n\n@Component\npublic class EnvPrinter {\n\n    @Value(\"${app.env:unknown}\")\n    private String env;\n\n    @PostConstruct\n    public void print() {\n        System.out.println(\"Running in: \" + env);\n    }\n}\n\n// Activate via command line:\n// $ java -jar app.jar --spring.profiles.active=dev\n//\n// Or in application.properties:\n// spring.profiles.active=dev\n//\n// Or via environment variable:\n// $ export SPRING_PROFILES_ACTIVE=prod",
+"output": "Running in: development",
+"points": [
+"Profile-specific files follow the pattern <code>application-{profile}.properties</code>.",
+"Multiple profiles can be active: <code>spring.profiles.active=dev,metrics</code>.",
+"Profile-specific properties override values in the base <code>application.properties</code>.",
+"Use profiles to swap database URLs, API keys, feature flags per environment."
+]
+},
+
+// ═══════════════════════════════════════════
+// SECTION: DECLARING BEANS
+// ═══════════════════════════════════════════
+{
+"id": 8,
+"section": "Declaring Beans",
+"title": "Create a Bean with @Component",
+"desc": "Create a simple Spring-managed bean using the <code>@Component</code> annotation and verify it's registered in the context.",
+"lang": "java",
+"code": "import org.springframework.stereotype.Component;\nimport jakarta.annotation.PostConstruct;\n\n@Component\npublic class GreetingService {\n\n    public String greet(String name) {\n        return \"Hello, \" + name + \"!\";\n    }\n\n    @PostConstruct\n    public void init() {\n        System.out.println(\"GreetingService bean created!\");\n    }\n}\n\n// Verify from main:\nApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);\nGreetingService gs = ctx.getBean(GreetingService.class);\nSystem.out.println(gs.greet(\"Spring\"));",
+"output": "GreetingService bean created!\nHello, Spring!",
+"points": [
+"<code>@Component</code> tells Spring: \"create and manage an instance of this class.\"",
+"The bean name defaults to the class name in camelCase: <code>greetingService</code>.",
+"You can customize the name: <code>@Component(\"myGreeter\")</code>.",
+"The class must be in a package scanned by <code>@ComponentScan</code>."
+]
+},
+{
+"id": 9,
+"title": "Stereotype Annotations: @Service, @Repository, @Controller",
+"desc": "Understand the difference between <code>@Component</code>, <code>@Service</code>, <code>@Repository</code>, and <code>@Controller</code>. They all register beans — the difference is semantic.",
+"lang": "java",
+"code": "@Service                    // Business logic layer\npublic class UserService {\n    public String findUser(String id) {\n        return \"User-\" + id;\n    }\n}\n\n@Repository                 // Data access layer\npublic class UserRepository {\n    public String fetchFromDb(String id) {\n        return \"DB-Record-\" + id;\n    }\n}\n\n@Controller                 // Spring MVC — returns views\npublic class HomeController {\n    // ...\n}\n\n@RestController             // REST API — returns JSON/data directly\npublic class ApiController {\n    // @RestController = @Controller + @ResponseBody\n}",
+"points": [
+"All stereotype annotations are specializations of <code>@Component</code> — they all create beans.",
+"<code>@Service</code> — no extra behavior, purely semantic (marks business logic).",
+"<code>@Repository</code> — adds automatic exception translation (SQL exceptions → Spring's DataAccessException).",
+"<code>@Controller</code> / <code>@RestController</code> — enables request mapping and web layer behavior.",
+"Use the right stereotype for clarity — a <code>@Service</code> in a repository package is confusing."
+],
+"table": {
+  "headers": ["Annotation", "Layer", "Extra Behavior"],
+  "rows": [
+    ["@Component", "Generic", "None"],
+    ["@Service", "Business", "None (semantic only)"],
+    ["@Repository", "Data Access", "Exception translation"],
+    ["@Controller", "Web (MVC)", "View resolution"],
+    ["@RestController", "Web (REST)", "@Controller + @ResponseBody"]
+  ]
+}
+},
+{
+"id": 10,
+"title": "Create Beans with @Bean in @Configuration",
+"desc": "Use a <code>@Configuration</code> class to manually declare beans. This is how you register third-party library objects as beans.",
+"lang": "java",
+"code": "import org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.web.client.RestTemplate;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.annotation.JsonInclude;\n\n@Configuration\npublic class AppConfig {\n\n    @Bean\n    public RestTemplate restTemplate() {\n        return new RestTemplate();\n    }\n\n    @Bean\n    public ObjectMapper customObjectMapper() {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);\n        return mapper;\n    }\n\n    @Bean(name = \"appVersion\")\n    public String version() {\n        return \"2.1.0\";\n    }\n}",
+"points": [
+"Use <code>@Bean</code> when you can't annotate the source class (third-party libraries).",
+"The method name becomes the bean name by default (<code>restTemplate</code>, <code>customObjectMapper</code>).",
+"Override with <code>@Bean(name = \"myName\")</code> or <code>@Bean(\"myName\")</code>.",
+"<code>@Configuration</code> ensures that calling a <code>@Bean</code> method multiple times returns the same singleton (CGLIB proxying)."
+]
+},
+{
+"id": 11,
+"title": "@Component vs @Bean — When to Use Which",
+"desc": "Decide between annotating your class with <code>@Component</code> vs declaring it in a <code>@Configuration</code> class with <code>@Bean</code>.",
+"lang": "java",
+"code": "// ✅ USE @Component — your own class, simple instantiation\n@Service\npublic class OrderService {\n    // Spring creates this automatically\n}\n\n// ✅ USE @Bean — third-party class, custom setup needed\n@Configuration\npublic class HttpConfig {\n\n    @Bean\n    public RestTemplate restTemplate() {\n        RestTemplate rt = new RestTemplate();\n        // Add interceptors, error handlers, etc.\n        return rt;\n    }\n}\n\n// ❌ You can NOT put @Component on RestTemplate:\n// @Component              // won't work — not your class!\n// public class RestTemplate { ... }",
+"points": [
+"<code>@Component</code>: you own the class, no special construction logic needed.",
+"<code>@Bean</code>: third-party class, or you need custom initialization/configuration.",
+"<code>@Bean</code>: also useful when the same class needs multiple bean instances with different config.",
+"Rule of thumb: if you can edit the source, use <code>@Component</code>. Otherwise, use <code>@Bean</code>."
+],
+"table": {
+  "headers": ["Criterion", "@Component", "@Bean"],
+  "rows": [
+    ["Your own class", "✅ Preferred", "Works"],
+    ["Third-party class", "❌ Can't annotate", "✅ Required"],
+    ["Custom instantiation", "Limited", "✅ Full control"],
+    ["Multiple instances", "❌ One per class", "✅ Multiple methods"],
+    ["Auto-detected", "✅ Via scan", "❌ Must be in @Configuration"]
+  ]
+}
+},
+
+// ═══════════════════════════════════════════
+// SECTION: DEPENDENCY INJECTION
+// ═══════════════════════════════════════════
+{
+"id": 12,
+"section": "Dependency Injection",
+"title": "Constructor Injection (Recommended)",
+"desc": "Inject dependencies via the constructor. This is the recommended approach — it supports immutability and is easy to test.",
+"lang": "java",
+"code": "import org.springframework.stereotype.Service;\n\n@Service\npublic class UserService {\n\n    private final UserRepository userRepository;\n    private final EmailService emailService;\n\n    // @Autowired is optional with a single constructor (Spring 4.3+)\n    public UserService(UserRepository userRepository, EmailService emailService) {\n        this.userRepository = userRepository;\n        this.emailService = emailService;\n    }\n\n    public void registerUser(String name, String email) {\n        userRepository.save(name, email);\n        emailService.sendWelcome(email);\n    }\n}\n\n// Easy to unit test — no Spring needed:\nUserRepository mockRepo = mock(UserRepository.class);\nEmailService mockEmail = mock(EmailService.class);\nUserService service = new UserService(mockRepo, mockEmail);",
+"points": [
+"Constructor injection makes dependencies explicit and mandatory.",
+"Fields can be <code>final</code> — the bean is immutable after creation.",
+"No <code>@Autowired</code> needed if there's only one constructor.",
+"Unit testing is trivial — just pass mocks via the constructor."
+]
+},
+{
+"id": 13,
+"title": "Field Injection (Discouraged)",
+"desc": "Understand why <code>@Autowired</code> on fields is discouraged, even though it's shorter to write.",
+"lang": "java",
+"badCode": "@Service\npublic class UserService {\n\n    @Autowired                     // ❌ Field injection\n    private UserRepository repo;\n\n    @Autowired\n    private EmailService email;\n\n    // Problems:\n    // 1. Fields can't be final → mutable\n    // 2. No way to create this object without Spring (hard to test)\n    // 3. Dependencies are hidden — not visible in the API\n    // 4. Easy to add too many → violates Single Responsibility\n}",
+"code": "// ✅ Refactored to constructor injection:\n@Service\npublic class UserService {\n\n    private final UserRepository repo;   // final = immutable\n    private final EmailService email;\n\n    public UserService(UserRepository repo, EmailService email) {\n        this.repo = repo;\n        this.email = email;\n    }\n}\n\n// With Lombok — even shorter than field injection:\n@Service\n@RequiredArgsConstructor     // generates constructor for all final fields\npublic class UserService {\n    private final UserRepository repo;\n    private final EmailService email;\n}",
+"points": [
+"Field injection hides dependencies — they're not visible in the constructor.",
+"You can't make fields <code>final</code> → the bean is mutable.",
+"Unit testing requires reflection or Spring context — not ideal.",
+"<code>@RequiredArgsConstructor</code> from Lombok gives you the best of both worlds."
+],
+"table": {
+  "headers": ["Feature", "Constructor", "Field", "Setter"],
+  "rows": [
+    ["Immutability (final)", "✅", "❌", "❌"],
+    ["Required deps enforced", "✅", "❌", "❌"],
+    ["Easy to unit test", "✅", "❌", "✅"],
+    ["No reflection needed", "✅", "❌", "✅"],
+    ["Circular dep detection", "✅ (early)", "❌ (late)", "❌ (late)"]
+  ]
+}
+},
+{
+"id": 14,
+"title": "Setter Injection (Optional Dependencies)",
+"desc": "Use setter injection for truly optional dependencies that the bean can function without.",
+"lang": "java",
+"code": "@Service\npublic class ReportService {\n\n    private final DataSource dataSource;    // required\n    private CacheService cacheService;      // optional\n\n    public ReportService(DataSource dataSource) {\n        this.dataSource = dataSource;       // required via constructor\n    }\n\n    @Autowired(required = false)            // optional via setter\n    public void setCacheService(CacheService cacheService) {\n        this.cacheService = cacheService;\n    }\n\n    public Report generate() {\n        if (cacheService != null) {\n            Report cached = cacheService.get(\"report\");\n            if (cached != null) return cached;\n        }\n        // ... generate from dataSource\n    }\n}",
+"points": [
+"Setter injection is appropriate for truly optional dependencies.",
+"<code>@Autowired(required = false)</code> — Spring won't fail if the bean doesn't exist.",
+"Combine constructor (required) + setter (optional) in the same class.",
+"Alternatively, use <code>Optional&lt;CacheService&gt;</code> in the constructor."
+]
+},
+{
+"id": 15,
+"title": "Inject Dependencies into @Bean Methods",
+"desc": "When declaring beans with <code>@Bean</code>, Spring automatically resolves method parameters from the context.",
+"lang": "java",
+"code": "@Configuration\npublic class ServiceConfig {\n\n    @Bean\n    public UserRepository userRepository() {\n        return new UserRepository();\n    }\n\n    // Spring injects userRepository automatically as a parameter\n    @Bean\n    public UserService userService(UserRepository userRepository) {\n        return new UserService(userRepository);\n    }\n\n    // Can also call other @Bean methods directly\n    // (works because @Configuration uses CGLIB proxy)\n    @Bean\n    public AdminService adminService() {\n        return new AdminService(userService(userRepository()));\n        // userService() and userRepository() return cached singletons!\n    }\n}",
+"points": [
+"<code>@Bean</code> method parameters are resolved from the ApplicationContext.",
+"In <code>@Configuration</code> classes, calling another <code>@Bean</code> method returns the singleton (proxied).",
+"This is called \"full mode\" — enabled by CGLIB proxying of <code>@Configuration</code> classes.",
+"Prefer the parameter approach — it's more explicit and works in both full and lite mode."
+]
+},
+
+// ═══════════════════════════════════════════
+// SECTION: BEAN SCOPES
+// ═══════════════════════════════════════════
+{
+"id": 16,
+"section": "Bean Scopes",
+"title": "Singleton Scope (Default)",
+"desc": "By default, Spring creates ONE instance of each bean and shares it everywhere. Verify this behavior.",
+"lang": "java",
+"code": "@Service   // Singleton by default\npublic class CounterService {\n    private int count = 0;\n\n    public int increment() {\n        return ++count;\n    }\n}\n\n// Verify singleton behavior:\nApplicationContext ctx = SpringApplication.run(App.class, args);\n\nCounterService s1 = ctx.getBean(CounterService.class);\nCounterService s2 = ctx.getBean(CounterService.class);\n\nSystem.out.println(s1 == s2);            // true — same instance!\nSystem.out.println(s1.increment());      // 1\nSystem.out.println(s2.increment());      // 2 — shared state!",
+"output": "true\n1\n2",
+"points": [
+"Singleton is the default scope — one instance per ApplicationContext.",
+"All injections of this bean receive the SAME object reference.",
+"Shared mutable state in singletons can cause concurrency bugs!",
+"Keep singletons stateless, or use thread-safe structures like <code>AtomicInteger</code>."
+]
+},
+{
+"id": 17,
+"title": "Prototype Scope",
+"desc": "Create a prototype-scoped bean. Spring creates a NEW instance every time the bean is requested.",
+"lang": "java",
+"code": "import org.springframework.context.annotation.Scope;\nimport org.springframework.stereotype.Component;\n\n@Component\n@Scope(\"prototype\")\npublic class ShoppingCart {\n    private final List<String> items = new ArrayList<>();\n    private final String cartId = UUID.randomUUID().toString().substring(0, 8);\n\n    public void addItem(String item) { items.add(item); }\n    public List<String> getItems() { return items; }\n    public String getCartId() { return cartId; }\n}\n\n// Verify prototype behavior:\nShoppingCart c1 = ctx.getBean(ShoppingCart.class);\nShoppingCart c2 = ctx.getBean(ShoppingCart.class);\n\nSystem.out.println(c1 == c2);              // false — different instances!\nSystem.out.println(c1.getCartId());        // e.g. \"a3f8c1d2\"\nSystem.out.println(c2.getCartId());        // e.g. \"7b2e9f04\"",
+"output": "false\na3f8c1d2\n7b2e9f04",
+"points": [
+"<code>@Scope(\"prototype\")</code> — new instance on every <code>getBean()</code> or injection.",
+"Spring does NOT manage the full lifecycle of prototype beans — <code>@PreDestroy</code> is NOT called.",
+"Use prototypes for stateful, short-lived objects (shopping carts, request builders, etc.).",
+"Be careful when injecting prototypes into singletons — see the next task."
+]
+},
+{
+"id": 18,
+"title": "The Singleton–Prototype Trap",
+"desc": "A prototype bean injected into a singleton is only created ONCE. Learn the problem and two ways to fix it.",
+"lang": "java",
+"badCode": "@Service   // singleton\npublic class OrderService {\n\n    private final ShoppingCart cart;   // prototype\n\n    public OrderService(ShoppingCart cart) {\n        this.cart = cart;\n        // ⚠️ Injected ONCE at startup — always the same cart!\n        // Every order uses the same cart instance.\n    }\n}",
+"code": "// ✅ FIX 1: Use ObjectProvider (recommended)\n@Service\npublic class OrderService {\n\n    private final ObjectProvider<ShoppingCart> cartProvider;\n\n    public OrderService(ObjectProvider<ShoppingCart> cartProvider) {\n        this.cartProvider = cartProvider;\n    }\n\n    public void placeOrder(String item) {\n        ShoppingCart cart = cartProvider.getObject(); // new instance!\n        cart.addItem(item);\n        System.out.println(\"Order placed with cart: \" + cart.getCartId());\n    }\n}\n\n// ✅ FIX 2: Use @Lookup (method injection)\n@Service\npublic abstract class OrderService {\n\n    @Lookup\n    protected abstract ShoppingCart createCart(); // Spring overrides this\n\n    public void placeOrder(String item) {\n        ShoppingCart cart = createCart(); // new instance each call!\n        cart.addItem(item);\n    }\n}",
+"points": [
+"A singleton is created once → its constructor dependencies are injected once.",
+"Injecting a prototype into a singleton defeats the prototype's purpose.",
+"<code>ObjectProvider&lt;T&gt;</code> defers bean creation to when <code>.getObject()</code> is called.",
+"<code>@Lookup</code> makes Spring override the method to return a fresh prototype each time."
+]
+},
+{
+"id": 19,
+"title": "Request and Session Scopes (Web)",
+"desc": "In a web application, beans can be scoped to an HTTP request or session. Understand when to use each.",
+"lang": "java",
+"code": "import org.springframework.web.context.annotation.RequestScope;\nimport org.springframework.web.context.annotation.SessionScope;\n\n@Component\n@RequestScope   // New instance for each HTTP request\npublic class RequestContext {\n    private final String requestId = UUID.randomUUID().toString();\n\n    public String getRequestId() {\n        return requestId;\n    }\n}\n\n@Component\n@SessionScope   // New instance for each HTTP session\npublic class UserSession {\n    private String username;\n    private List<String> recentPages = new ArrayList<>();\n\n    // getters and setters\n}\n\n// In a controller:\n@RestController\npublic class DemoController {\n\n    private final RequestContext requestContext;  // scoped proxy\n    private final UserSession userSession;\n\n    public DemoController(RequestContext rc, UserSession us) {\n        this.requestContext = rc;\n        this.userSession = us;\n    }\n\n    @GetMapping(\"/info\")\n    public String info() {\n        return \"Request: \" + requestContext.getRequestId();\n    }\n}",
+"points": [
+"<code>@RequestScope</code> — one bean per HTTP request. Destroyed when request completes.",
+"<code>@SessionScope</code> — one bean per HTTP session. Destroyed when session expires.",
+"Spring uses a scoped proxy (CGLIB) so singletons can depend on request/session beans.",
+"Available only in web-aware ApplicationContexts (e.g., Spring Boot web apps)."
+],
+"table": {
+  "headers": ["Scope", "Lifetime", "Use Case"],
+  "rows": [
+    ["singleton", "Entire app lifetime", "Stateless services, utils"],
+    ["prototype", "Until GC'd", "Stateful builders, carts"],
+    ["request", "Single HTTP request", "Request-specific context"],
+    ["session", "HTTP session", "User preferences, auth state"],
+    ["application", "ServletContext lifetime", "App-wide counters"]
+  ]
+}
+},
+
+// ═══════════════════════════════════════════
+// SECTION: BEAN LIFECYCLE
+// ═══════════════════════════════════════════
+{
+"id": 20,
+"section": "Bean Lifecycle",
+"title": "@PostConstruct and @PreDestroy",
+"desc": "Use lifecycle callbacks to run code after a bean is initialized and before it's destroyed.",
+"lang": "java",
+"code": "import jakarta.annotation.PostConstruct;\nimport jakarta.annotation.PreDestroy;\nimport org.springframework.stereotype.Service;\n\n@Service\npublic class CacheService {\n\n    private Map<String, Object> cache;\n\n    @PostConstruct\n    public void init() {\n        cache = new ConcurrentHashMap<>();\n        System.out.println(\"[CacheService] Initialized — cache ready\");\n    }\n\n    public void put(String key, Object value) {\n        cache.put(key, value);\n    }\n\n    public Object get(String key) {\n        return cache.get(key);\n    }\n\n    @PreDestroy\n    public void shutdown() {\n        System.out.println(\"[CacheService] Destroying — \" + cache.size() + \" entries cleared\");\n        cache.clear();\n    }\n}",
+"output": "[CacheService] Initialized — cache ready\n...\n(on shutdown)\n[CacheService] Destroying — 42 entries cleared",
+"points": [
+"<code>@PostConstruct</code> runs AFTER all dependencies are injected — safe to use them.",
+"<code>@PreDestroy</code> runs during graceful shutdown (SIGTERM, context close).",
+"These are Jakarta annotations (<code>jakarta.annotation</code>), not Spring-specific.",
+"<code>@PreDestroy</code> is NOT called for prototype-scoped beans."
+]
+},
+{
+"id": 21,
+"title": "Bean Lifecycle Phases — Full Picture",
+"desc": "Trace a bean through every lifecycle phase, from instantiation to destruction.",
+"lang": "java",
+"code": "import org.springframework.beans.factory.*;\nimport org.springframework.context.*;\nimport jakarta.annotation.*;\n\n@Component\npublic class LifecycleDemo implements\n        BeanNameAware,\n        BeanFactoryAware,\n        ApplicationContextAware,\n        InitializingBean,\n        DisposableBean {\n\n    public LifecycleDemo() {\n        System.out.println(\"1. Constructor called\");\n    }\n\n    @Override\n    public void setBeanName(String name) {\n        System.out.println(\"2. BeanNameAware — name: \" + name);\n    }\n\n    @Override\n    public void setBeanFactory(BeanFactory factory) {\n        System.out.println(\"3. BeanFactoryAware\");\n    }\n\n    @Override\n    public void setApplicationContext(ApplicationContext ctx) {\n        System.out.println(\"4. ApplicationContextAware\");\n    }\n\n    @PostConstruct\n    public void postConstruct() {\n        System.out.println(\"5. @PostConstruct\");\n    }\n\n    @Override\n    public void afterPropertiesSet() {\n        System.out.println(\"6. InitializingBean.afterPropertiesSet()\");\n    }\n\n    // === BEAN IS READY ===\n\n    @PreDestroy\n    public void preDestroy() {\n        System.out.println(\"7. @PreDestroy\");\n    }\n\n    @Override\n    public void destroy() {\n        System.out.println(\"8. DisposableBean.destroy()\");\n    }\n}",
+"output": "1. Constructor called\n2. BeanNameAware — name: lifecycleDemo\n3. BeanFactoryAware\n4. ApplicationContextAware\n5. @PostConstruct\n6. InitializingBean.afterPropertiesSet()\n...\n(on shutdown)\n7. @PreDestroy\n8. DisposableBean.destroy()",
+"points": [
+"The order is: Constructor → Aware interfaces → @PostConstruct → InitializingBean → Ready.",
+"On shutdown: @PreDestroy → DisposableBean.destroy().",
+"In practice, <code>@PostConstruct</code> and <code>@PreDestroy</code> are sufficient for most cases.",
+"Implementing Spring interfaces couples your code to Spring — prefer annotations."
+]
+},
+{
+"id": 22,
+"title": "CommandLineRunner and ApplicationRunner",
+"desc": "Run code AFTER the entire ApplicationContext is ready using <code>CommandLineRunner</code> or <code>ApplicationRunner</code>.",
+"lang": "java",
+"code": "import org.springframework.boot.CommandLineRunner;\nimport org.springframework.stereotype.Component;\nimport org.springframework.core.annotation.Order;\n\n@Component\n@Order(1)   // lower number = runs first\npublic class DataSeeder implements CommandLineRunner {\n\n    private final UserRepository userRepository;\n\n    public DataSeeder(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n\n    @Override\n    public void run(String... args) throws Exception {\n        System.out.println(\"Seeding initial data...\");\n        userRepository.save(\"admin\", \"admin@example.com\");\n        userRepository.save(\"guest\", \"guest@example.com\");\n        System.out.println(\"Data seeded!\");\n    }\n}\n\n@Component\n@Order(2)\npublic class StartupLogger implements CommandLineRunner {\n    @Override\n    public void run(String... args) {\n        System.out.println(\"Application is fully ready!\");\n        System.out.println(\"Args: \" + Arrays.toString(args));\n    }\n}",
+"output": "Seeding initial data...\nData seeded!\nApplication is fully ready!\nArgs: []",
+"points": [
+"<code>CommandLineRunner</code> receives raw <code>String[] args</code> from the command line.",
+"<code>ApplicationRunner</code> receives parsed <code>ApplicationArguments</code> instead.",
+"Use <code>@Order</code> to control execution order of multiple runners.",
+"Runners execute AFTER all beans are created and all <code>@PostConstruct</code> methods have run."
+]
+},
+{
+"id": 23,
+"title": "@Bean with initMethod and destroyMethod",
+"desc": "For third-party classes you can't annotate, use <code>@Bean</code>'s <code>initMethod</code> and <code>destroyMethod</code> attributes.",
+"lang": "java",
+"code": "// A third-party class with no Spring annotations\npublic class ConnectionPool {\n    private int size;\n\n    public ConnectionPool(int size) {\n        this.size = size;\n    }\n\n    public void open() {\n        System.out.println(\"Pool opened with \" + size + \" connections\");\n    }\n\n    public void close() {\n        System.out.println(\"Pool closed — all connections released\");\n    }\n}\n\n// Register with lifecycle hooks:\n@Configuration\npublic class PoolConfig {\n\n    @Bean(initMethod = \"open\", destroyMethod = \"close\")\n    public ConnectionPool connectionPool() {\n        return new ConnectionPool(10);\n    }\n}",
+"output": "Pool opened with 10 connections\n...\n(on shutdown)\nPool closed — all connections released",
+"points": [
+"<code>initMethod</code> runs after the bean is fully constructed (same phase as <code>@PostConstruct</code>).",
+"<code>destroyMethod</code> runs during shutdown (same phase as <code>@PreDestroy</code>).",
+"Methods must be <code>public</code>, take no arguments, and return <code>void</code>.",
+"Spring auto-detects <code>close()</code> and <code>shutdown()</code> methods as destroy methods by default."
+]
+},
+
+// ═══════════════════════════════════════════
+// SECTION: QUALIFIERS & DISAMBIGUATION
+// ═══════════════════════════════════════════
+{
+"id": 24,
+"section": "Qualifiers & Disambiguation",
+"title": "The NoUniqueBeanDefinitionException Problem",
+"desc": "When two beans implement the same interface, Spring can't decide which to inject. Reproduce and understand the error.",
+"lang": "java",
+"badCode": "public interface NotificationService {\n    void send(String message);\n}\n\n@Service\npublic class EmailNotification implements NotificationService {\n    public void send(String msg) { System.out.println(\"Email: \" + msg); }\n}\n\n@Service\npublic class SmsNotification implements NotificationService {\n    public void send(String msg) { System.out.println(\"SMS: \" + msg); }\n}\n\n@Service\npublic class AlertService {\n    // ❌ NoUniqueBeanDefinitionException!\n    // Spring finds 2 beans of type NotificationService\n    public AlertService(NotificationService ns) { }\n}",
+"code": "// Three ways to fix this:\n\n// ✅ FIX 1: @Primary — mark one as the default\n@Service\n@Primary\npublic class EmailNotification implements NotificationService { ... }\n\n// ✅ FIX 2: @Qualifier — explicitly pick one\n@Service\npublic class AlertService {\n    public AlertService(@Qualifier(\"smsNotification\") NotificationService ns) { }\n}\n\n// ✅ FIX 3: Inject all implementations as a List\n@Service\npublic class AlertService {\n    private final List<NotificationService> channels;\n\n    public AlertService(List<NotificationService> channels) {\n        this.channels = channels; // contains both Email and SMS\n    }\n\n    public void alertAll(String msg) {\n        channels.forEach(ch -> ch.send(msg));\n    }\n}",
+"points": [
+"<code>NoUniqueBeanDefinitionException</code> occurs when Spring finds multiple candidates for injection.",
+"<code>@Primary</code> — sets a default; the other bean can still be injected with <code>@Qualifier</code>.",
+"<code>@Qualifier(\"beanName\")</code> — explicitly selects by bean name.",
+"<code>List&lt;T&gt;</code> or <code>Map&lt;String, T&gt;</code> — inject ALL beans of that type."
+]
+},
+{
+"id": 25,
+"title": "Using @Primary",
+"desc": "Mark one implementation as the primary (default) choice when multiple candidates exist.",
+"lang": "java",
+"code": "public interface PaymentGateway {\n    String charge(double amount);\n}\n\n@Service\n@Primary    // This is the default when no qualifier is specified\npublic class StripeGateway implements PaymentGateway {\n    public String charge(double amount) {\n        return \"Charged $\" + amount + \" via Stripe\";\n    }\n}\n\n@Service\npublic class PayPalGateway implements PaymentGateway {\n    public String charge(double amount) {\n        return \"Charged $\" + amount + \" via PayPal\";\n    }\n}\n\n@Service\npublic class CheckoutService {\n    private final PaymentGateway gateway;\n\n    public CheckoutService(PaymentGateway gateway) {\n        this.gateway = gateway;  // gets StripeGateway (primary)\n    }\n\n    public void checkout(double amount) {\n        System.out.println(gateway.charge(amount));\n    }\n}",
+"output": "Charged $99.99 via Stripe",
+"points": [
+"<code>@Primary</code> is a soft default — it can be overridden with <code>@Qualifier</code>.",
+"Only ONE bean of a given type should be marked <code>@Primary</code>.",
+"Use <code>@Primary</code> for the most commonly needed implementation.",
+"The non-primary bean is still available via <code>@Qualifier</code> or by bean name."
+]
+},
+{
+"id": 26,
+"title": "Using @Qualifier",
+"desc": "Explicitly select which bean to inject by name when multiple candidates exist.",
+"lang": "java",
+"code": "// Name your beans explicitly with @Qualifier\n@Service\n@Qualifier(\"stripe\")\npublic class StripeGateway implements PaymentGateway {\n    public String charge(double amount) {\n        return \"Stripe: $\" + amount;\n    }\n}\n\n@Service\n@Qualifier(\"paypal\")\npublic class PayPalGateway implements PaymentGateway {\n    public String charge(double amount) {\n        return \"PayPal: $\" + amount;\n    }\n}\n\n// Inject specific one:\n@Service\npublic class RefundService {\n    private final PaymentGateway gateway;\n\n    public RefundService(@Qualifier(\"paypal\") PaymentGateway gateway) {\n        this.gateway = gateway;   // explicitly PayPalGateway\n    }\n}\n\n// Or inject both with different qualifiers:\n@Service\npublic class PaymentRouter {\n    private final PaymentGateway stripe;\n    private final PaymentGateway paypal;\n\n    public PaymentRouter(\n            @Qualifier(\"stripe\") PaymentGateway stripe,\n            @Qualifier(\"paypal\") PaymentGateway paypal) {\n        this.stripe = stripe;\n        this.paypal = paypal;\n    }\n}",
+"points": [
+"<code>@Qualifier</code> overrides <code>@Primary</code> — it's an explicit choice.",
+"The qualifier string matches the bean name or a custom <code>@Qualifier</code> value.",
+"Without a custom qualifier, the default bean name is the class name in camelCase.",
+"You can create custom qualifier annotations for type-safe injection."
+]
+},
+
+// ═══════════════════════════════════════════
+// SECTION: CONDITIONAL BEANS & PROFILES
+// ═══════════════════════════════════════════
+{
+"id": 27,
+"section": "Conditional Beans & Profiles",
+"title": "Profile-Specific Bean Implementations",
+"desc": "Use <code>@Profile</code> to register different bean implementations depending on the active Spring profile.",
+"lang": "java",
+"code": "public interface EmailService {\n    void send(String to, String body);\n}\n\n@Service\n@Profile(\"dev\")\npublic class MockEmailService implements EmailService {\n    @Override\n    public void send(String to, String body) {\n        System.out.println(\"[MOCK] Would send to \" + to + \": \" + body);\n    }\n}\n\n@Service\n@Profile(\"prod\")\npublic class SmtpEmailService implements EmailService {\n    @Override\n    public void send(String to, String body) {\n        // Real SMTP sending logic\n        System.out.println(\"[SMTP] Sent to \" + to);\n    }\n}\n\n// Usage — inject the interface, profile decides the implementation:\n@Service\npublic class UserService {\n    private final EmailService emailService;\n\n    public UserService(EmailService emailService) {\n        this.emailService = emailService;\n    }\n\n    public void register(String email) {\n        emailService.send(email, \"Welcome!\");\n    }\n}\n\n// Run with: --spring.profiles.active=dev",
+"output": "[MOCK] Would send to user@test.com: Welcome!",
+"points": [
+"<code>@Profile(\"dev\")</code> — bean is only created when the \"dev\" profile is active.",
+"Combine profiles: <code>@Profile({\"dev\", \"test\"})</code> — active in either profile.",
+"Negate: <code>@Profile(\"!prod\")</code> — active in everything EXCEPT prod.",
+"This pattern is great for swapping real services with mocks in development."
+]
+},
+{
+"id": 28,
+"title": "@ConditionalOnProperty and @ConditionalOnMissingBean",
+"desc": "Use Spring Boot's <code>@Conditional</code> annotations to create beans based on configuration properties or the absence of other beans.",
+"lang": "java",
+"code": "// application.properties:\n// feature.cache.enabled=true\n// feature.cache.type=redis\n\n@Configuration\npublic class CacheConfig {\n\n    @Bean\n    @ConditionalOnProperty(\n        name = \"feature.cache.enabled\",\n        havingValue = \"true\",\n        matchIfMissing = false\n    )\n    public CacheService redisCacheService() {\n        System.out.println(\"Redis cache enabled\");\n        return new RedisCacheService();\n    }\n\n    @Bean\n    @ConditionalOnMissingBean(CacheService.class)\n    public CacheService fallbackCacheService() {\n        System.out.println(\"Using in-memory cache (fallback)\");\n        return new InMemoryCacheService();\n    }\n}\n\n// @ConditionalOnClass — only if a class is on the classpath:\n@Bean\n@ConditionalOnClass(name = \"io.lettuce.core.RedisClient\")\npublic RedisConnectionFactory redisFactory() {\n    return new LettuceConnectionFactory();\n}",
+"points": [
+"<code>@ConditionalOnProperty</code> — creates the bean only if a property has a specific value.",
+"<code>@ConditionalOnMissingBean</code> — creates the bean only if no other bean of that type exists (fallback).",
+"<code>@ConditionalOnClass</code> — creates the bean only if a class is on the classpath.",
+"These are the building blocks of Spring Boot's entire auto-configuration mechanism."
+],
+"table": {
+  "headers": ["Annotation", "Condition"],
+  "rows": [
+    ["@ConditionalOnProperty", "Config property has specific value"],
+    ["@ConditionalOnClass", "Class exists on classpath"],
+    ["@ConditionalOnMissingBean", "No bean of that type registered yet"],
+    ["@ConditionalOnBean", "A bean of that type already exists"],
+    ["@ConditionalOnExpression", "SpEL expression is true"],
+    ["@Profile", "Active Spring profile matches"]
+  ]
+}
+},
+
+// ═══════════════════════════════════════════
+// SECTION: COMPONENT SCANNING
+// ═══════════════════════════════════════════
+{
+"id": 29,
+"section": "Component Scanning & Configuration",
+"title": "Component Scanning Rules",
+"desc": "Understand how Spring discovers beans via component scanning, and what happens when your classes are in the wrong package.",
+"lang": "java",
+"badCode": "// Main class in com.example.myapp\n@SpringBootApplication\npublic class MyAppApplication { ... }\n\n// ❌ This service is in a SIBLING package — NOT scanned!\npackage com.example.shared;\n\n@Service\npublic class SharedService { ... }\n// Spring never finds this bean → NoSuchBeanDefinitionException",
+"code": "// ✅ FIX 1: Move to a sub-package of the main class\npackage com.example.myapp.shared;  // sub-package — scanned!\n\n@Service\npublic class SharedService { ... }\n\n// ✅ FIX 2: Extend the scan with @ComponentScan\n@SpringBootApplication\n@ComponentScan(basePackages = {\n    \"com.example.myapp\",\n    \"com.example.shared\"     // explicitly include sibling package\n})\npublic class MyAppApplication { ... }\n\n// ✅ FIX 3: Exclude specific components\n@ComponentScan(\n    basePackages = \"com.example\",\n    excludeFilters = @ComponentScan.Filter(\n        type = FilterType.ASSIGNABLE_TYPE,\n        classes = LegacyService.class\n    )\n)",
+"points": [
+"<code>@ComponentScan</code> starts from the main class's package and scans all sub-packages.",
+"Sibling or parent packages are NOT scanned by default.",
+"Always place your main class at the ROOT of your package hierarchy.",
+"Use <code>excludeFilters</code> to skip specific classes during scanning."
+]
+},
+{
+"id": 30,
+"title": "@Configuration Full Mode vs Lite Mode",
+"desc": "Understand the critical difference between <code>@Configuration</code> (proxied) and <code>@Component</code> (non-proxied) when declaring <code>@Bean</code> methods.",
+"lang": "java",
+"code": "// ═══ FULL MODE (@Configuration) ═══\n// Bean methods are proxied — calling them returns cached singletons\n@Configuration\npublic class FullModeConfig {\n\n    @Bean\n    public ServiceA serviceA() {\n        System.out.println(\"Creating ServiceA\");\n        return new ServiceA();\n    }\n\n    @Bean\n    public ServiceB serviceB() {\n        // serviceA() returns the SAME cached instance (proxy intercepts)\n        return new ServiceB(serviceA());\n    }\n}\n// Output: \"Creating ServiceA\" printed ONCE\n\n\n// ═══ LITE MODE (@Component) ═══\n// Bean methods are NOT proxied — plain Java method calls\n@Component\npublic class LiteModeConfig {\n\n    @Bean\n    public ServiceA serviceA() {\n        System.out.println(\"Creating ServiceA\");\n        return new ServiceA();\n    }\n\n    @Bean\n    public ServiceB serviceB() {\n        // serviceA() is a normal Java call — creates a NEW instance!\n        return new ServiceB(serviceA());\n    }\n}\n// Output: \"Creating ServiceA\" printed TWICE — two different objects!",
+"output": "// Full Mode:\nCreating ServiceA\n→ serviceA() in serviceB() returns same instance\n\n// Lite Mode:\nCreating ServiceA\nCreating ServiceA\n→ serviceA() in serviceB() creates a SECOND instance!",
+"points": [
+"<code>@Configuration</code> uses CGLIB to create a proxy subclass of your config class.",
+"The proxy intercepts <code>@Bean</code> method calls and returns the cached singleton.",
+"<code>@Component</code> with <code>@Bean</code> is \"lite mode\" — no proxy, plain method calls.",
+"Always use <code>@Configuration</code> for classes that contain inter-dependent <code>@Bean</code> methods."
+]
+}
+];
+
+// ── Sections ──
+const SECTIONS = {};
+DATA.forEach(t => { if (t.section) SECTIONS[t.id] = t.section; });
+
+// ── Build TOC ──
+const tocEl = document.getElementById('toc');
+DATA.forEach(t => {
+  const a = document.createElement('a');
+  a.href = '#task-' + t.id;
+  a.innerHTML = '<span class="toc-num">' + String(t.id).padStart(2, '0') + '</span>' + t.title;
+  tocEl.appendChild(a);
+});
+
+// ── Build Tasks ──
+const tasksEl = document.getElementById('tasks');
+DATA.forEach(t => {
+  let html = '';
+
+  if (SECTIONS[t.id]) {
+    html += '<div class="section-divider"><div class="section-divider-line"></div><div class="section-divider-label">' + SECTIONS[t.id] + '</div><div class="section-divider-line"></div></div>';
+  }
+
+  html += '<div class="task-card" id="task-' + t.id + '">';
+  html += '<div class="task-header"><span class="task-number">' + String(t.id).padStart(2, '0') + '</span><div class="task-content"><div class="task-title">' + t.title + '</div><div class="task-desc">' + t.desc + '</div></div></div>';
+
+  if (t.badCode) {
+    html += '<div class="bad-code"><div class="bad-code-label">✗ Problem</div><pre>' + highlightJava(t.badCode) + '</pre></div>';
+  }
+
+  if (t.scenario) {
+    html += '<div class="scenario"><div class="scenario-label">▸ Scenario Setup</div><pre>' + highlightJava(t.scenario) + '</pre></div>';
+  }
+
+  const langLabel = t.lang || 'java';
+  const langDotClass = langLabel === 'bash' ? 'bash' : langLabel === 'xml' ? 'xml' : langLabel === 'properties' ? 'props' : 'java';
+
+  html += '<div class="solution-toggle" onclick="this.parentElement.classList.toggle(\'open\')"><div class="solution-toggle-left"><span>▶</span> Solution</div><svg class="toggle-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>';
+
+  html += '<div class="solution-body">';
+  html += '<div class="code-wrap"><div class="code-lang"><span class="lang-dot ' + langDotClass + '"></span>' + langLabel + '<button class="copy-btn" onclick="event.stopPropagation();copyCode(this)">Copy</button></div>';
+  html += '<pre class="code-block">' + highlightJava(t.code) + '</pre></div>';
+
+  if (t.output) {
+    html += '<div class="output-block"><div class="output-label">Expected Output</div><pre>' + t.output + '</pre></div>';
+  }
+
+  if (t.points) {
+    html += '<div class="key-points"><div class="key-points-title">Key Points</div>';
+    t.points.forEach(p => { html += '<div class="key-point">' + p + '</div>'; });
+    html += '</div>';
+  }
+  if (t.table) {
+    html += '<div class="key-points"><div class="key-points-title">Comparison</div><table class="kp-table"><tr>';
+    t.table.headers.forEach(h => { html += '<th>' + h + '</th>'; });
+    html += '</tr>';
+    t.table.rows.forEach(r => { html += '<tr>'; r.forEach(c => { html += '<td>' + c + '</td>'; }); html += '</tr>'; });
+    html += '</table></div>';
+  }
+
+  html += '</div></div>';
+  tasksEl.innerHTML += html;
+});
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('.code-block');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+</script>
+</body>
+</html>
