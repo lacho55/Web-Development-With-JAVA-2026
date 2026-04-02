@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+theatre:
+  log-level: DEBUG
+  log-file: logs/theatre-dev.log
+
+logging:
+  level:
+    root: INFO
+    bg.uni.fmi.theatre: DEBUG
