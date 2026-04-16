@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+theatre:
+  log-level: INFO
+  log-file: logs/theatre-prod.log
+
+logging:
+  level:
+    root: WARN
+    bg.uni.fmi.theatre: INFO
