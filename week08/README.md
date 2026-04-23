@@ -61,6 +61,28 @@ CREATE SCHEMA IF NOT EXISTS theatre;
 
 You can run it via `psql`, DBeaver, IntelliJ's Database tool, or pgAdmin.
 
+### Create the application user and grant privileges
+
+If you installed PostgreSQL locally (Option A), you also need to create the `theatre`
+user that the application will connect as. Connect as a superuser (e.g. `postgres`) and run:
+
+```sql
+CREATE USER theatre WITH PASSWORD 'theatre';
+GRANT ALL PRIVILEGES ON DATABASE theatre TO theatre;
+GRANT ALL ON SCHEMA theatre TO theatre;
+```
+
+From a shell with `psql` available:
+
+```bash
+psql -U postgres -c "CREATE USER theatre WITH PASSWORD 'theatre';"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE theatre TO theatre;"
+psql -U postgres -d theatre -c "GRANT ALL ON SCHEMA theatre TO theatre;"
+```
+
+> If you used the Docker option (B), the `theatre` user is already created by the
+> `POSTGRES_USER` / `POSTGRES_PASSWORD` env vars — you can skip this step.
+
 ---
 
 # Task 1 — Connect the Spring Boot app to the database
