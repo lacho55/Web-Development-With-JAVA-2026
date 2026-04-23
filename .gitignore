@@ -1,0 +1,49 @@
+# Maven / build output
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/*.nar
+**/dependency-reduced-pom.xml
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+**/buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle (in case someone adds a Gradle module)
+**/.gradle/
+**/build/
+
+# JetBrains IDEs (IntelliJ IDEA)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# Local env
+.env
+.env.local
