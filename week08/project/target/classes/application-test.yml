@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+theatre:
+  log-level: ERROR
+  log-file: logs/theatre-test.log
+
+logging:
+  level:
+    root: WARN
+    bg.uni.fmi.theatre: ERROR
