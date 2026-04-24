@@ -280,65 +280,101 @@ entity and the Liquibase-managed table disagree. Fix any mismatches here.
 Today the `ShowRepository` interface
 (`src/main/java/bg/uni/fmi/theatre/repository/ShowRepository.java`) is implemented by
 `DevInMemoryShowRepository` (a `HashMap<Long, Show>` with a `@PostConstruct` seed). We will
-replace that in-memory implementation with a DB-backed one. There must be **exactly one**
-bean implementing `ShowRepository`, so either delete `DevInMemoryShowRepository` or comment
-out its `@Repository` annotation. (An alternative would be to use a dedicated profile for DB and conditional beans)
+replace the in-memory flavour with a Spring Data JPA one — and we do it with **zero changes
+to the services or controllers**.
 
-### 4.1 Create a Spring Data JPA repository
+The trick: the methods on our custom `ShowRepository` (`save`, `findById`, `findAll`,
+`deleteById`, `existsById`) are a subset of what `JpaRepository<Show, Long>` already
+provides. So we can simply make `ShowRepository` **extend** `JpaRepository` — Spring Data
+will generate the proxy for us, no adapter class needed.
 
-`src/main/java/bg/uni/fmi/theatre/repository/jpa/ShowJpaRepository.java`:
+### 4.1 Turn `ShowRepository` into a Spring Data JPA repository
+
+Change the interface so it extends `JpaRepository<Show, Long>` and drop the now-redundant
+method declarations (they all come from `JpaRepository`):
 
 ```java
-package bg.uni.fmi.theatre.repository.jpa;
+package bg.uni.fmi.theatre.repository;
 
 import bg.uni.fmi.theatre.domain.Show;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ShowJpaRepository extends JpaRepository<Show, Long> {
+public interface ShowRepository extends JpaRepository<Show, Long> {
 }
 ```
 
-### 4.2 Implement `ShowRepository` on top of it
+Spring Data will automatically create a proxy bean for this interface at startup. The
+services already inject `ShowRepository`, so they pick up the new DB-backed bean with no
+code changes. When you later need custom queries, add methods here using the
+[Spring Data method-name conventions](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
+(e.g. `List<Show> findByGenre(Genre genre);`) or `@Query`.
 
-`src/main/java/bg/uni/fmi/theatre/repository/jpa/DbShowRepository.java`:
+### 4.2 Seed sample shows conditionally
+
+We still want the five sample shows from `DevInMemoryShowRepository.seed()` to be available
+when the DB is empty (e.g. first run, or after a `docker compose down -v`). Extract the
+seed logic into a dedicated bean that **only inserts rows when the table is empty** — that
+way restarts don't duplicate data, and a DBA-loaded DB is never overwritten.
+
+> Do this step **before** section 4.3 — you'll copy the five `save(new Show(...))` calls
+> straight out of `DevInMemoryShowRepository.seed()`, so keep that class around for now.
+
+`src/main/java/bg/uni/fmi/theatre/repository/ShowSeeder.java`:
 
 ```java
-package bg.uni.fmi.theatre.repository.jpa;
+package bg.uni.fmi.theatre.repository;
 
-import bg.uni.fmi.theatre.domain.Show;
-import bg.uni.fmi.theatre.repository.ShowRepository;
-import org.springframework.stereotype.Repository;
+import bg.uni.fmi.theatre.domain.*;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+@Component
+public class ShowSeeder implements CommandLineRunner {
 
-@Repository
-public class DbShowRepository implements ShowRepository {
+    private final ShowRepository shows;
 
-    private final ShowJpaRepository jpa;
-
-    public DbShowRepository(ShowJpaRepository jpa) {
-        this.jpa = jpa;
+    public ShowSeeder(ShowRepository shows) {
+        this.shows = shows;
     }
 
-    @Override public Show save(Show show) { return jpa.save(show); }
-    @Override public Optional<Show> findById(Long id) { return jpa.findById(id); }
-    @Override public List<Show> findAll() { return jpa.findAll(); }
-    @Override public void deleteById(Long id) { jpa.deleteById(id); }
-    @Override public boolean existsById(Long id) { return jpa.existsById(id); }
+    @Override
+    public void run(String... args) {
+        if (shows.count() > 0) {
+            return; // already seeded — do nothing
+        }
+
+        shows.save(new Show(null, "Hamlet",
+                "William Shakespeare's timeless tragedy...",
+                Genre.DRAMA, 180, AgeRating.PG_16));
+
+        shows.save(new Show(null, "Chicago",
+                "Set in the jazz age of the 1920s...",
+                Genre.MUSICAL, 135, AgeRating.PG_12));
+
+        // ... copy the remaining shows from DevInMemoryShowRepository.seed()
+    }
 }
 ```
 
-The service layer depends on the `ShowRepository` interface, not on any implementation, so
-swapping `HashMap` for Postgres requires **no changes in the services or controllers**. The
-new DB-backed bean is always wired in, regardless of the active profile (`dev`, `stage`,
-`prod`, …), because we put the datasource configuration in the default `application.yml`.
+> Pass `null` (or drop the id from the constructor) — the DB generates it via
+> `GenerationType.IDENTITY`. The old in-memory `nextId()` is no longer needed.
 
-### 4.3 Optional — seed some data
+### 4.3 Delete the in-memory implementation
 
-Either add an `INSERT` changeset after `001-create-show-table.yaml`, or copy the seed
-shows from `DevInMemoryShowRepository.seed()` into a small `CommandLineRunner` that inserts
-them when the table is empty.
+Once the seeder is in place, there must be **exactly one** bean implementing
+`ShowRepository`, so delete `DevInMemoryShowRepository` entirely (or remove its
+`@Repository` annotation). With the JPA-backed interface from 4.1, Spring will now wire
+the Spring Data proxy into every service.
+
+The service layer depends on the `ShowRepository` interface, so swapping `HashMap` for
+Postgres requires **no changes in the services or controllers**. The new DB-backed bean is
+always wired in, regardless of the active profile (`dev`, `stage`, `prod`, …), because we
+put the datasource configuration in the default `application.yml`.
+
+> Alternative: add an `INSERT` changeset after `001-create-show-table.yaml` — this moves
+> the seed data into Liquibase and makes it part of the schema migration history. Pick
+> whichever feels more natural for your project; the `CommandLineRunner` approach is
+> simpler for a lab.
 
 ---
 
