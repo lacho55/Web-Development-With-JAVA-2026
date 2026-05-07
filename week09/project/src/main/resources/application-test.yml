@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    show-sql: false
+
+theatre:
+  log-level: ERROR
+  log-file: logs/theatre-test.log
+
+logging:
+  level:
+    root: WARN
+    bg.uni.fmi.theatre: ERROR
+    org.testcontainers: INFO
+    liquibase: WARN

@@ -1,0 +1,43 @@
+server:
+  port: 9090
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/theatre
+    username: theatre_user
+    password: theatre_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: theatre
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: gemma4
+          temperature: 0.7
+    # To use OpenAI instead: swap the starter in pom.xml and uncomment below:
+    # openai:
+    #   api-key: ${OPENAI_API_KEY}
+    #   chat:
+    #     options:
+    #       model: gpt-4o-mini
+    #       temperature: 0.7
+
+theatre:
+  log-level: DEBUG
+  log-file: logs/theatre-dev.log
+
+logging:
+  level:
+    root: INFO
+    bg.uni.fmi.theatre: DEBUG
