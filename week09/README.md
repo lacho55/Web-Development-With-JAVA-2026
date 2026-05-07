@@ -54,34 +54,19 @@ automated integration tests that run against a real database.
 
 ### Task 1 — Liquibase changeset for the `hall` table
 
-Create `src/main/resources/db/changelog/changes/002-create-hall-table.yaml`:
+Create `src/main/resources/db/changelog/changes/002-create-hall-table.sql`:
 
-```yaml
-databaseChangeLog:
-  - changeSet:
-      id: 002-create-hall-table
-      author: fmi
-      changes:
-        - createTable:
-            tableName: hall
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: name
-                  type: VARCHAR(100)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: capacity
-                  type: INT
-                  constraints:
-                    nullable: false
+```sql
+--liquibase formatted sql
+
+--changeset fmi:002-create-hall-table
+CREATE TABLE hall (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    capacity INT NOT NULL
+);
+
+--rollback DROP TABLE hall;
 ```
 
 Register it in `db.changelog-master.yaml`:
@@ -89,9 +74,9 @@ Register it in `db.changelog-master.yaml`:
 ```yaml
 databaseChangeLog:
   - include:
-      file: db/changelog/changes/001-create-show-table.yaml
+      file: db/changelog/changes/001-create-show-table.sql
   - include:
-      file: db/changelog/changes/002-create-hall-table.yaml
+      file: db/changelog/changes/002-create-hall-table.sql
 ```
 
 Start the app and verify:
@@ -104,56 +89,23 @@ SELECT * FROM theatre.hall;
 
 ### Task 2 — Liquibase changeset for the `performance` table
 
-Create `src/main/resources/db/changelog/changes/003-create-performance-table.yaml`:
+Create `src/main/resources/db/changelog/changes/003-create-performance-table.sql`:
 
-```yaml
-databaseChangeLog:
-  - changeSet:
-      id: 003-create-performance-table
-      author: fmi
-      changes:
-        - createTable:
-            tableName: performance
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: show_id
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: hall_id
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: start_time
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-        - addForeignKeyConstraint:
-            baseTableName: performance
-            baseColumnNames: show_id
-            referencedTableName: show
-            referencedColumnNames: id
-            constraintName: fk_performance_show
-        - addForeignKeyConstraint:
-            baseTableName: performance
-            baseColumnNames: hall_id
-            referencedTableName: hall
-            referencedColumnNames: id
-            constraintName: fk_performance_hall
+```sql
+--liquibase formatted sql
+
+--changeset fmi:003-create-performance-table
+CREATE TABLE performance (
+    id BIGSERIAL PRIMARY KEY,
+    show_id BIGINT NOT NULL,
+    hall_id BIGINT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_performance_show FOREIGN KEY (show_id) REFERENCES show(id),
+    CONSTRAINT fk_performance_hall FOREIGN KEY (hall_id) REFERENCES hall(id)
+);
+
+--rollback DROP TABLE performance;
 ```
 
 Register in `db.changelog-master.yaml`:
@@ -161,11 +113,11 @@ Register in `db.changelog-master.yaml`:
 ```yaml
 databaseChangeLog:
   - include:
-      file: db/changelog/changes/001-create-show-table.yaml
+      file: db/changelog/changes/001-create-show-table.sql
   - include:
-      file: db/changelog/changes/002-create-hall-table.yaml
+      file: db/changelog/changes/002-create-hall-table.sql
   - include:
-      file: db/changelog/changes/003-create-performance-table.yaml
+      file: db/changelog/changes/003-create-performance-table.sql
 ```
 
 Start the app. Liquibase should create both tables with foreign keys. Verify:
@@ -482,23 +434,15 @@ private Long version;
 ```
 
 And add a matching column in a new changeset
-`src/main/resources/db/changelog/changes/004-add-version-columns.yaml`:
+`src/main/resources/db/changelog/changes/004-add-version-columns.sql`:
 
-```yaml
-databaseChangeLog:
-  - changeSet:
-      id: 004-add-version-to-performance
-      author: fmi
-      changes:
-        - addColumn:
-            tableName: performance
-            columns:
-              - column:
-                  name: version
-                  type: BIGINT
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
+```sql
+--liquibase formatted sql
+
+--changeset fmi:004-add-version-to-performance
+ALTER TABLE performance ADD COLUMN version BIGINT NOT NULL DEFAULT 0;
+
+--rollback ALTER TABLE performance DROP COLUMN version;
 ```
 
 Register in `db.changelog-master.yaml`. Start the app — Hibernate validation should pass.
@@ -514,65 +458,25 @@ changed the row first, the version won't match, Hibernate throws
 
 #### 2.1 Liquibase changeset
 
-`src/main/resources/db/changelog/changes/005-create-reservation-table.yaml`:
+`src/main/resources/db/changelog/changes/005-create-reservation-table.sql`:
 
-```yaml
-databaseChangeLog:
-  - changeSet:
-      id: 005-create-reservation-table
-      author: fmi
-      changes:
-        - createTable:
-            tableName: reservation
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: performance_id
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: seat_label
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: customer_name
-                  type: VARCHAR(100)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: reserved_at
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: version
-                  type: BIGINT
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-        - addForeignKeyConstraint:
-            baseTableName: reservation
-            baseColumnNames: performance_id
-            referencedTableName: performance
-            referencedColumnNames: id
-            constraintName: fk_reservation_performance
-        - addUniqueConstraint:
-            tableName: reservation
-            columnNames: performance_id, seat_label
-            constraintName: uq_reservation_seat
+```sql
+--liquibase formatted sql
+
+--changeset fmi:005-create-reservation-table
+CREATE TABLE reservation (
+    id BIGSERIAL PRIMARY KEY,
+    performance_id BIGINT NOT NULL,
+    seat_label VARCHAR(20) NOT NULL,
+    customer_name VARCHAR(100) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    reserved_at TIMESTAMP NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_reservation_performance FOREIGN KEY (performance_id) REFERENCES performance(id),
+    CONSTRAINT uq_reservation_seat UNIQUE (performance_id, seat_label)
+);
+
+--rollback DROP TABLE reservation;
 ```
 
 The unique constraint on `(performance_id, seat_label)` ensures the same seat cannot be
@@ -1203,10 +1107,10 @@ test passing on H2 does not guarantee it works on PostgreSQL.
 
 ```
 src/main/resources/db/changelog/changes/
-   002-create-hall-table.yaml          
-   003-create-performance-table.yaml   
-   004-add-version-columns.yaml        
-   005-create-reservation-table.yaml   
+   002-create-hall-table.sql
+   003-create-performance-table.sql
+   004-add-version-columns.sql
+   005-create-reservation-table.sql   
 
 src/main/java/bg/uni/fmi/theatre/
    domain/Reservation.java             

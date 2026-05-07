@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir week09)"
+      "Bash(mkdir week09)",
+      "Bash(cp -r week08/project week09/)"
     ],
     "deny": [],
     "ask": []
