@@ -1,0 +1,20 @@
+<h1>Gosho</h1>
+
+@if(hide) {
+<app-user-card ></app-user-card>
+}
+<div style="display: flex; justify-content: space-between">
+@for (element  of elements; track element) {
+<app-user-card ></app-user-card>
+}
+</div>
+
+@for (element  of elements; track element) {
+{{ element }}
+}
+<div
+  style="display: flex; flex-direction: column">
+<button matButton="filled" (click)="hideUserCard()">Click me!</button>
+
+<button matButton="filled" (click)="addUserCard()">Add user</button>
+</div>
