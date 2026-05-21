@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Theatre Ticketing — UI Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    min-height: 100vh;
+  }
+
+  /* ── layout ── */
+  .page-label {
+    text-align: center;
+    padding: 18px 0 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #8892a4;
+  }
+
+  .views-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 16px 28px 48px;
+  }
+
+  .view-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .view-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #6c7a8d;
+    text-align: center;
+  }
+
+  /* ── browser chrome ── */
+  .browser {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,.13), 0 1px 4px rgba(0,0,0,.08);
+    background: #fff;
+  }
+
+  .browser-bar {
+    background: #e8eaed;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #d0d3d8;
+  }
+
+  .browser-dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: #555;
+    font-family: monospace;
+  }
+
+  .browser-body { padding: 0; }
+
+  /* ── app chrome ── */
+  .app-header {
+    background: #1a1a2e;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .app-logo {
+    color: #e8b86d;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: .03em;
+  }
+
+  .app-logo span { color: #fff; }
+
+  .container { padding: 22px 24px; }
+
+  /* ── LIST VIEW ── */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .toolbar h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .btn-primary { background: #1a1a2e; color: #fff; }
+  .btn-secondary { background: #f0f2f5; color: #1a1a2e; border: 1px solid #d0d3d8; }
+  .btn-danger { background: #fff0f0; color: #c0392b; border: 1px solid #f5c6c6; }
+  .btn-warning { background: #fff8f0; color: #c87941; border: 1px solid #f5dfc6; }
+  .btn-back { background: transparent; color: #6c7a8d; padding: 5px 0; font-size: 12px; border: none; cursor: pointer; margin-bottom: 16px; display: flex; align-items: center; gap: 4px; }
+  .btn-edit { background: #eef2ff; color: #3b5bdb; border: 1px solid #c5d0fa; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr { background: #f7f8fa; }
+  th {
+    text-align: left;
+    padding: 9px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: #8892a4;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #2d3748;
+  }
+  tr:last-child td { border-bottom: none; }
+  .td-title { color: #1a1a2e; font-weight: 600; cursor: pointer; }
+  .td-title:hover { color: #3b5bdb; text-decoration: underline; }
+  .td-actions { display: flex; gap: 5px; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .badge-drama    { background: #eef2ff; color: #3b5bdb; }
+  .badge-musical  { background: #fff0fb; color: #a21caf; }
+  .badge-thriller { background: #fff8f0; color: #c87941; }
+  .badge-opera    { background: #f0fdf4; color: #166534; }
+
+  .badge-all   { background: #f0fdf4; color: #166534; }
+  .badge-pg12  { background: #fffbeb; color: #92400e; }
+  .badge-pg16  { background: #fff7ed; color: #c2410c; }
+  .badge-r18   { background: #fef2f2; color: #b91c1c; }
+
+  /* ── DETAIL VIEW ── */
+  .detail-back { margin-bottom: 16px; }
+  .detail-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .detail-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #1a1a2e;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    margin-bottom: 14px;
+  }
+  .detail-field label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #8892a4;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .detail-field p {
+    font-size: 13px;
+    color: #2d3748;
+    font-weight: 500;
+  }
+  .detail-desc {
+    margin-bottom: 18px;
+  }
+  .detail-desc label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #8892a4;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .detail-desc p {
+    font-size: 12px;
+    color: #4a5568;
+    line-height: 1.6;
+  }
+  .detail-actions { display: flex; gap: 8px; }
+
+  /* ── FORM VIEW ── */
+  .form-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .form-card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1a1a2e;
+  }
+  .form-group { margin-bottom: 13px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 4px;
+  }
+  .form-group label .req { color: #e53e3e; margin-left: 2px; }
+  .form-control {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #d0d3d8;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #2d3748;
+    background: #fff;
+    outline: none;
+  }
+  .form-control:focus { border-color: #3b5bdb; }
+  .form-control.error-field { border-color: #e53e3e; }
+  .error-msg { font-size: 10px; color: #e53e3e; margin-top: 3px; }
+  textarea.form-control { resize: none; height: 56px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-actions { display: flex; gap: 8px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<p class="page-label">Theatre Ticketing — Angular 21 UI · Exam 1 Mockup</p>
+
+<div class="views-grid">
+
+  <!-- ══════════════ VIEW 1: LIST ══════════════ -->
+  <div class="view-wrap">
+    <p class="view-title">View 1 · Show List <code style="font-size:10px;background:#e8eaed;padding:1px 5px;border-radius:3px;">currentView() === 'list'</code></p>
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        </div>
+        <div class="browser-url">localhost:4200</div>
+      </div>
+      <div class="browser-body">
+        <div class="app-header">
+          <span class="app-logo">🎭 <span>Theatre</span> Ticketing</span>
+        </div>
+        <div class="container">
+          <div class="toolbar">
+            <h2>Shows</h2>
+            <button class="btn btn-primary">+ Add Show</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th><th>Genre</th><th>Duration</th><th>Age</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-title">Hamlet</td>
+                <td><span class="badge badge-drama">DRAMA</span></td>
+                <td>180 min</td>
+                <td><span class="badge badge-pg16">PG_16</span></td>
+                <td class="td-actions">
+                  <button class="btn btn-warning" style="font-size:10px;padding:4px 8px;">Edit</button>
+                  <button class="btn btn-danger" style="font-size:10px;padding:4px 8px;">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-title">Chicago</td>
+                <td><span class="badge badge-musical">MUSICAL</span></td>
+                <td>135 min</td>
+                <td><span class="badge badge-pg12">PG_12</span></td>
+                <td class="td-actions">
+                  <button class="btn btn-warning" style="font-size:10px;padding:4px 8px;">Edit</button>
+                  <button class="btn btn-danger" style="font-size:10px;padding:4px 8px;">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-title">The Mousetrap</td>
+                <td><span class="badge badge-thriller">THRILLER</span></td>
+                <td>120 min</td>
+                <td><span class="badge badge-all">ALL</span></td>
+                <td class="td-actions">
+                  <button class="btn btn-warning" style="font-size:10px;padding:4px 8px;">Edit</button>
+                  <button class="btn btn-danger" style="font-size:10px;padding:4px 8px;">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-title">La Traviata</td>
+                <td><span class="badge badge-opera">OPERA</span></td>
+                <td>150 min</td>
+                <td><span class="badge badge-all">ALL</span></td>
+                <td class="td-actions">
+                  <button class="btn btn-warning" style="font-size:10px;padding:4px 8px;">Edit</button>
+                  <button class="btn btn-danger" style="font-size:10px;padding:4px 8px;">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="td-title">Waiting for Godot</td>
+                <td><span class="badge badge-drama">DRAMA</span></td>
+                <td>110 min</td>
+                <td><span class="badge badge-pg16">PG_16</span></td>
+                <td class="td-actions">
+                  <button class="btn btn-warning" style="font-size:10px;padding:4px 8px;">Edit</button>
+                  <button class="btn btn-danger" style="font-size:10px;padding:4px 8px;">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ VIEW 2: DETAIL ══════════════ -->
+  <div class="view-wrap">
+    <p class="view-title">View 2 · Show Detail <code style="font-size:10px;background:#e8eaed;padding:1px 5px;border-radius:3px;">currentView() === 'detail'</code></p>
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        </div>
+        <div class="browser-url">localhost:4200</div>
+      </div>
+      <div class="browser-body">
+        <div class="app-header">
+          <span class="app-logo">🎭 <span>Theatre</span> Ticketing</span>
+        </div>
+        <div class="container">
+          <button class="btn-back">← Back to list</button>
+          <div class="detail-card">
+            <h2>Hamlet</h2>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>Genre</label>
+                <p><span class="badge badge-drama">DRAMA</span></p>
+              </div>
+              <div class="detail-field">
+                <label>Duration</label>
+                <p>180 min</p>
+              </div>
+              <div class="detail-field">
+                <label>Age Rating</label>
+                <p><span class="badge badge-pg16">PG_16</span></p>
+              </div>
+            </div>
+            <div class="detail-desc">
+              <label>Description</label>
+              <p>William Shakespeare's timeless tragedy of a Danish prince seeking revenge for his father's murder.</p>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-edit">Edit</button>
+              <button class="btn btn-secondary">← Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ VIEW 3: FORM ══════════════ -->
+  <div class="view-wrap">
+    <p class="view-title">View 3 · Add / Edit Form <code style="font-size:10px;background:#e8eaed;padding:1px 5px;border-radius:3px;">currentView() === 'form'</code></p>
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        </div>
+        <div class="browser-url">localhost:4200</div>
+      </div>
+      <div class="browser-body">
+        <div class="app-header">
+          <span class="app-logo">🎭 <span>Theatre</span> Ticketing</span>
+        </div>
+        <div class="container">
+          <div class="form-card">
+            <h2>Add Show</h2>
+
+            <div class="form-group">
+              <label>Title <span class="req">*</span></label>
+              <input class="form-control error-field" type="text" value="" placeholder="e.g. Swan Lake" />
+              <p class="error-msg">Title is required (max 100 chars).</p>
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" placeholder="Short description of the show…"></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Genre <span class="req">*</span></label>
+                <select class="form-control">
+                  <option>DRAMA</option>
+                  <option>COMEDY</option>
+                  <option selected>MUSICAL</option>
+                  <option>THRILLER</option>
+                  <option>OPERA</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Age Rating <span class="req">*</span></label>
+                <select class="form-control">
+                  <option selected>ALL</option>
+                  <option>PG_12</option>
+                  <option>PG_16</option>
+                  <option>R_18</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Duration (minutes) <span class="req">*</span></label>
+              <input class="form-control" type="number" value="90" />
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary">Create Show</button>
+              <button class="btn btn-secondary">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
