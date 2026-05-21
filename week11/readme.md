@@ -1,4 +1,4 @@
-# Angular UI (Theatre Ticketing) — Exam 1
+# Angular UI (Theatre Ticketing)
 
 For this exam you will build the frontend of the Theatre Ticketing system using **Angular 21**.  
 The backend is **not required** — all data lives in a local service that mimics the API contract.  
