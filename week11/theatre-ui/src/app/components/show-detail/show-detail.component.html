@@ -1,0 +1,12 @@
+<button (click)="backRequested.emit()">← Back to list</button>
+
+@if (show(); as s) {
+  <h2>{{ s.title }}</h2>
+  <p><strong>Genre:</strong> {{ s.genre }}</p>
+  <p><strong>Duration:</strong> {{ s.durationMinutes }} min</p>
+  <p><strong>Age Rating:</strong> {{ s.ageRating }}</p>
+  <p><strong>Description:</strong> {{ s.description }}</p>
+  <button (click)="editRequested.emit(s)">Edit</button>
+} @else {
+  <p>Show not found.</p>
+}

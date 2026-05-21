@@ -1,0 +1,27 @@
+<div class="container">
+
+  @if (currentView() === 'list') {
+    <app-show-list
+      (showSelected)="onShowSelected($event)"
+      (editRequested)="onEditRequested($event)"
+      (addRequested)="onAddRequested()"
+    />
+  }
+
+  @if (currentView() === 'detail') {
+    <app-show-detail
+      [show]="selectedShow()"
+      (backRequested)="onBackRequested()"
+      (editRequested)="onEditRequested($event)"
+    />
+  }
+
+  @if (currentView() === 'form') {
+    <app-show-form
+      [editShow]="showToEdit()"
+      (saved)="onSaved($event)"
+      (cancelled)="onCancelled()"
+    />
+  }
+
+</div>

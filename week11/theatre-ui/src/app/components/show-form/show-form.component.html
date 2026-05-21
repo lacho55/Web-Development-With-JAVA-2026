@@ -1,0 +1,47 @@
+<h2>{{ isEditMode ? 'Edit Show' : 'Add Show' }}</h2>
+
+<form #showForm="ngForm" (ngSubmit)="onSubmit(showForm.valid)">
+
+  <label>Title *
+    <input name="title" [(ngModel)]="formData.title"
+           required maxlength="100" #titleField="ngModel" />
+    @if (titleField.invalid && titleField.touched) {
+      <span class="error">Title is required (max 100 chars).</span>
+    }
+  </label>
+
+  <label>Description
+    <textarea name="description" [(ngModel)]="formData.description"></textarea>
+  </label>
+
+  <label>Genre *
+    <select name="genre" [(ngModel)]="formData.genre" required>
+      @for (g of genres; track g) {
+        <option [value]="g">{{ g }}</option>
+      }
+    </select>
+  </label>
+
+  <label>Duration (minutes) *
+    <input name="durationMinutes" type="number"
+           [(ngModel)]="formData.durationMinutes"
+           required min="1" #durField="ngModel" />
+    @if (durField.invalid && durField.touched) {
+      <span class="error">Duration must be at least 1 minute.</span>
+    }
+  </label>
+
+  <label>Age Rating *
+    <select name="ageRating" [(ngModel)]="formData.ageRating" required>
+      @for (r of ageRatings; track r) {
+        <option [value]="r">{{ r }}</option>
+      }
+    </select>
+  </label>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Save Changes' : 'Create Show' }}</button>
+    <button type="button" (click)="cancelled.emit()">Cancel</button>
+  </div>
+
+</form>
